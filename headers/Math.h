@@ -20,6 +20,7 @@ namespace MathStuff
 	class Euler
 	{
 	public:
+		typedef std::tr1::function<void (double, const std::vector<double>& , std::vector<double>&)
 		Euler(double , double, const std::vector<double> &);
 		virtual ~Euler() {};
 		void setStep(double step) { dStep = step; }
