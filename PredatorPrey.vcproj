@@ -210,7 +210,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\sources\Matrix.cpp"
+				RelativePath=".\sources\Math.cpp"
 				>
 			</File>
 		</Filter>
@@ -222,7 +222,7 @@
 			Name="Header Files"
 			>
 			<File
-				RelativePath=".\headers\Matrix.h"
+				RelativePath=".\headers\Math.h"
 				>
 			</File>
 		</Filter>
