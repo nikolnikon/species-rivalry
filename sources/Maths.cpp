@@ -1,4 +1,4 @@
-#include "Math.h"
+#include "Maths.h"
 
 extern MathStuff::Coeffs coeff_1;
 extern MathStuff::Coeffs coeff_2;

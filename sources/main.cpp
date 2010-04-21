@@ -1,5 +1,6 @@
 #include <QApplication>
-#include "Math.h"
+#include "fmModelImpl.h"
+#include "Maths.h"
 
 MathStuff::Coeffs coeff_1;
 MathStuff::Coeffs coeff_2;
