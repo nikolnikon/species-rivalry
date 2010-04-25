@@ -1,16 +1,16 @@
 #include "Maths.h"
 
-extern MathStuff::Coeffs coeff_1;
-extern MathStuff::Coeffs coeff_2;
+extern MathStuff::Coeffs preyCoeffs;
+extern MathStuff::Coeffs predCoeffs;
 
 double MathStuff::f1(const std::vector<double>& Y, double t)
 {
-	return (coeff_1.k1() - coeff_1.k2() * Y[1]) * Y[0]; 
+	return (preyCoeffs.k1() - preyCoeffs.k2() * Y[1]) * Y[0]; 
 }
 
 double MathStuff::f2(const std::vector<double>& Y, double t)
 {
-	return (- coeff_2.k1() + coeff_2.k2() * Y[0]) * Y[1]; 
+	return (- predCoeffs.k1() + predCoeffs.k2() * Y[0]) * Y[1]; 
 }
 
 double MathStuff::defaultFunc(const std::vector<double>& Y, double t)

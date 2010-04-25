@@ -2,19 +2,26 @@
 #include "fmModelImpl.h"
 #include "Maths.h"
 
-MathStuff::Coeffs coeff_1;
-MathStuff::Coeffs coeff_2;
+MathStuff::Coeffs preyCoeffs;
+MathStuff::Coeffs predCoeffs;
 
 int main(int argc, char **argv)
 {
-	coeff_1.setK1(3);
-	coeff_1.setK2(2);
-	coeff_2.setK1(2);
-	coeff_2.setK2(4);
+	preyCoeffs.setK1(3);
+	preyCoeffs.setK2(2);
+	predCoeffs.setK1(2);
+	predCoeffs.setK2(4);
 
-	std::vector<double> initConds;
-	initConds.push_back(coeff_2.k1() / coeff_2.k2());
-	initConds.push_back(coeff_1.k1() / coeff_1.k2());
+	QApplication app(argc, argv);
+
+	fmModelImpl formModel;
+	formModel.show();
+
+	return app.exec();
+
+	/*std::vector<double> initConds;
+	initConds.push_back(predCoeffs.k1() / predCoeffs.k2());
+	initConds.push_back(preyCoeffs.k1() / preyCoeffs.k2());
 	
 	std::vector<MathStuff::Euler::RightFunc> rightFuncs;
 	rightFuncs.push_back(MathStuff::f1);
@@ -22,14 +29,5 @@ int main(int argc, char **argv)
 	
 	MathStuff::Euler *pe = new MathStuff::ExplicitEuler(2, 0.1, 0.000001, 2, initConds, rightFuncs);
 	pe->solve();
-	MathStuff::Matrix m(pe->getSolution());
-	
-	/*MathStuff::Euler *pe = new MathStuff::ExplicitEuler(1, 0.1, 0.000001, std::vector<double>(1, 0.006737), std::vector<MathStuff::Euler::RightFunc>(1, MathStuff::test));
-	pe->solve();
 	MathStuff::Matrix m(pe->getSolution());*/
-
-	/*MathStuff::Matrix m(2, 2);
-
-	m[1][1] = 3;
-	qDebug("%f", m[1][1]);*/
 }

@@ -24,6 +24,7 @@ namespace MathStuff
 		int rowCount() const { return m.size(); }
 		int columnCount() const { return iNumColumns; }
 		std::vector<double>& operator[](int ind) { return m[ind]; }
+		const std::vector<double>& operator[](int ind) const { return m[ind]; }
 		void addRow();
 		void addRow(const std::vector<double> &crRow);
 	private:
@@ -42,10 +43,11 @@ namespace MathStuff
 		void setStep(double step) { dStep = step; }
 		void setAccuracy(double accur) { dAccuracy = accur; }
 		// не уверен, что копирование вектора - хороший ход
-		void setInitConds(const std::vector<double> &crInitConds) { /*vecInitConds = crInitConds;*/ } 
+		//void setInitConds(const std::vector<double> &crInitConds) { vecInitConds = crInitConds; } 
 		void setRightFuncs(const std::vector<RightFunc> &crRightFuncs) { vecRightFuncs = crRightFuncs; }
 		virtual void solve() = 0;
 		const Matrix& getSolution() const { return mSol; }
+		const std::vector<double>& getTimeNodes() const { return vecTimeNodes; } 
 	protected:
 		/*!Количество уравнений в системе*/
 		int iDimension;

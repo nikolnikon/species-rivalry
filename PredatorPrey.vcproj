@@ -254,6 +254,28 @@
 			<File
 				RelativePath=".\headers\fmModelImpl.h"
 				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="Moc&apos;ing fmModelImpl.h..."
+						CommandLine="&quot;$(QTDIR)\bin\moc.exe&quot;  -D_WINDOWS -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I&quot;$(QTDIR)\include\QtCore\.&quot; -I&quot;$(QTDIR)\include\QtGui\.&quot; -I&quot;$(QTDIR)\include\.&quot; -I&quot;.\.&quot; -I&quot;$(QTDIR)\include\ActiveQt\.&quot; -I&quot;$(QTDIR)\mkspecs\default\.&quot; -I&quot;.\headers\.&quot; -I&quot;.\tmp\rcc\.&quot; -I&quot;.\tmp\uic\.&quot; -I&quot;.\tmp\moc\.&quot; -I&quot;$(QWTDIR)\src\.&quot; &quot;.\headers\fmModelImpl.h&quot; -o &quot;.\tmp\moc\moc_fmModelImpl.cpp&quot;&#x0D;&#x0A;"
+						AdditionalDependencies="&quot;$(QTDIR)\bin\moc.exe&quot;;.\headers\fmModelImpl.h"
+						Outputs="&quot;.\tmp\moc\moc_fmModelImpl.cpp&quot;"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="Moc&apos;ing fmModelImpl.h..."
+						CommandLine="&quot;$(QTDIR)\bin\moc.exe&quot;  -DQT_NO_DEBUG -DNDEBUG -D_WINDOWS -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -DNDEBUG -I&quot;c:\QT\qt-win-opensource-src-4.4.3\include\QtCore\.&quot; -I&quot;c:\QT\qt-win-opensource-src-4.4.3\include\QtGui\.&quot; -I&quot;c:\QT\qt-win-opensource-src-4.4.3\include\.&quot; -I&quot;.\.&quot; -I&quot;c:\QT\qt-win-opensource-src-4.4.3\include\ActiveQt\.&quot; -I&quot;.\release\.&quot; -I&quot;c:\QT\qt-win-opensource-src-4.4.3\mkspecs\default\.&quot; -I&quot;.\tmp\rcc\.&quot; -I&quot;.\tmp\uic\.&quot; -I&quot;.\tmp\moc\.&quot; &quot;.\headers\fmModelImpl.h&quot; -o &quot;.\tmp\moc\moc_fmModelImpl.cpp&quot;&#x0D;&#x0A;"
+						AdditionalDependencies="&quot;$(QTDIR)\bin\moc.exe&quot;;.\headers\fmModelImpl.h"
+						Outputs="&quot;.\tmp\moc\moc_fmModelImpl.cpp&quot;"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\headers\Maths.h"
@@ -265,6 +287,24 @@
 			Filter="moc;h;cpp"
 			UniqueIdentifier="{71ED8ED8-ACB9-4CE9-BBE1-E00B30144E11}"
 			>
+			<File
+				RelativePath=".\tmp\moc\moc_fmModelImpl.cpp"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+			</File>
 			<File
 				RelativePath=".\tmp\uic\ui_fmModel.h"
 				>
