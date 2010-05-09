@@ -42,14 +42,16 @@ namespace MathStuff
 		virtual ~Euler() {};
 		
 		void setStep(double step) { dStep = step; }
-		void setAccuracy(double accur) { dAccuracy = accur; }
+		void setEndTime(double endTime) { dEndTime = endTime; }
 		// не уверен, что копирование вектора - хороший ход
 		void setInitConds(const std::vector<double> &crInitConds); 
 		void setRightFuncs(const std::vector<RightFunc> &crRightFuncs) { vecRightFuncs = crRightFuncs; }
 		virtual void solve() = 0;
+		double getStep() const { return dStep; }
 		const Matrix& getSolution() const { return mSol; }
 		virtual const std::vector<double>* getNextPoint() = 0;
-		const std::vector<double>& getTimeNodes() const { return vecTimeNodes; } 
+		const std::vector<double>& getTimeNodes() const { return vecTimeNodes; }
+		void reset();
 	protected:
 		/*!Количество уравнений в системе*/
 		int iDimension;

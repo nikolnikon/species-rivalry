@@ -62,6 +62,12 @@ void MathStuff::Euler::setInitConds(const std::vector<double> &crInitConds)
 	vecTimeNodes.push_back(0.);
 }
 
+void MathStuff::Euler::reset()
+{
+	mSol.clear();
+	vecTimeNodes.clear();
+}
+
 MathStuff::ExplicitEuler::ExplicitEuler(int dimension, double initStep, double accuracy, double endTime, const std::vector<double> &initConds, const std::vector<RightFunc> &rightFuncs) : Euler(dimension, initStep, accuracy, endTime, initConds, rightFuncs)
 {
 }
@@ -88,8 +94,10 @@ const std::vector<double>* MathStuff::ExplicitEuler::getNextPoint()
 		return &(mSol[iter++]);
 	double curTime = 0; 
 	curTime += iter * dStep;
-	if (curTime > dEndTime)
+	if (curTime > dEndTime) {
+		iter = 0;
 		return 0;
+	}
 	vecTimeNodes.push_back(curTime);
 	mSol.addRow();
 	for (int i = 0; i < mSol.columnCount(); ++i)

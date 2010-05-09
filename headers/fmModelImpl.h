@@ -5,6 +5,7 @@
 
 class QwtPlot;
 class QwtPlotCurve;
+class QHBoxLayout;
 namespace MathStuff {
 	class Euler;
 }
@@ -20,8 +21,6 @@ private slots:
 	void test();
 
 private:
-  /*QwtPlot *predPlot;
-  QwtPlot *preyPlot;*/
 	QwtPlot *populPlot;
 	QwtPlot *phasePlot;
 	QwtPlotCurve *preyCurve;

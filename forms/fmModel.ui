@@ -29,7 +29,7 @@
    <widget class="QPushButton" name="qpbTest" >
     <property name="geometry" >
      <rect>
-      <x>160</x>
+      <x>310</x>
       <y>500</y>
       <width>75</width>
       <height>23</height>
@@ -38,6 +38,104 @@
     <property name="text" >
      <string>Тест</string>
     </property>
+   </widget>
+   <widget class="QPushButton" name="qpbStop" >
+    <property name="geometry" >
+     <rect>
+      <x>180</x>
+      <y>500</y>
+      <width>75</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text" >
+     <string>Стоп</string>
+    </property>
+   </widget>
+   <widget class="QGroupBox" name="qgbBox" >
+    <property name="geometry" >
+     <rect>
+      <x>470</x>
+      <y>60</y>
+      <width>208</width>
+      <height>171</height>
+     </rect>
+    </property>
+    <property name="title" >
+     <string>Параметры интегрирования</string>
+    </property>
+    <property name="flat" >
+     <bool>false</bool>
+    </property>
+    <layout class="QVBoxLayout" name="qvlBox" >
+     <property name="sizeConstraint" >
+      <enum>QLayout::SetFixedSize</enum>
+     </property>
+     <item>
+      <layout class="QVBoxLayout" name="qvlParams" >
+       <item>
+        <layout class="QHBoxLayout" name="qhlPrey" >
+         <item>
+          <widget class="QLabel" name="qlbPrey" >
+           <property name="text" >
+            <string>Жертвы</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="qlePrey" />
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="qhlPred" >
+         <item>
+          <widget class="QLabel" name="qlbPred" >
+           <property name="text" >
+            <string>Хищники</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="qlePred" />
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="qhlStep" >
+         <item>
+          <widget class="QLabel" name="qlbStep" >
+           <property name="text" >
+            <string>Шаг</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="qleStep" />
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="qhlTime" >
+         <item>
+          <widget class="QLabel" name="qlbTime" >
+           <property name="text" >
+            <string>Время</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="qleTime" />
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </item>
+    </layout>
+    <zorder>qlePrey</zorder>
+    <zorder>qlePred</zorder>
+    <zorder></zorder>
+    <zorder></zorder>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar" >
