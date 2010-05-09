@@ -43,8 +43,23 @@ void MathStuff::Matrix::addRow(const std::vector<double> &crRow)
 	m.push_back(crRow);
 }
 
+void MathStuff::Matrix::clear()
+{
+	for (int i = 0; i < m.size(); ++i)
+		m[i].clear();
+	m.clear();
+}
+
 MathStuff::Euler::Euler(int dimension, double initStep, double accuracy, double endTime, const std::vector<double> &initConds, const std::vector<MathStuff::Euler::RightFunc> &rightFuncs) : iDimension(dimension), dStep(initStep), dAccuracy(accuracy), dEndTime(endTime), vecRightFuncs(rightFuncs), vecTimeNodes(1, 0.0), mSol(initConds)
 {
+}
+
+void MathStuff::Euler::setInitConds(const std::vector<double> &crInitConds)
+{
+	mSol.clear();
+	mSol.addRow(crInitConds);
+	vecTimeNodes.clear();
+	vecTimeNodes.push_back(0.);
 }
 
 MathStuff::ExplicitEuler::ExplicitEuler(int dimension, double initStep, double accuracy, double endTime, const std::vector<double> &initConds, const std::vector<RightFunc> &rightFuncs) : Euler(dimension, initStep, accuracy, endTime, initConds, rightFuncs)
@@ -53,15 +68,31 @@ MathStuff::ExplicitEuler::ExplicitEuler(int dimension, double initStep, double a
 
 void MathStuff::ExplicitEuler::solve()
 {
-	double curTime = vecTimeNodes[0];
-	int iter = 0;
+	int iter = 1;
+	double curTime = dStep;
 	while (curTime <= dEndTime) { // вместо 2 должно стоять конечное время
-		iter += 1;
-		curTime += dStep;
 		vecTimeNodes.push_back(curTime);
 		mSol.addRow();
 		for (int i = 0; i < mSol.columnCount(); ++i) 
 			mSol[iter][i] = mSol[iter - 1][i] + dStep * vecRightFuncs[i](mSol[iter - 1], vecTimeNodes[iter - 1]);
-		
+		curTime += dStep;
+		iter += 1;
 	}
+}
+
+const std::vector<double>* MathStuff::ExplicitEuler::getNextPoint()
+{
+	static int iter = 0;
+	//++iter;
+	if (iter == 0)
+		return &(mSol[iter++]);
+	double curTime = 0; 
+	curTime += iter * dStep;
+	if (curTime > dEndTime)
+		return 0;
+	vecTimeNodes.push_back(curTime);
+	mSol.addRow();
+	for (int i = 0; i < mSol.columnCount(); ++i)
+		mSol[iter][i] = mSol[iter - 1][i] + dStep * vecRightFuncs[i](mSol[iter - 1], vecTimeNodes[iter - 1]);
+	return &(mSol[iter++]);
 }

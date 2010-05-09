@@ -13,19 +13,22 @@ class fmModelImpl : public QMainWindow, private Ui::fmModel
 	Q_OBJECT
 public:
   fmModelImpl(QWidget *parent = 0);
-  //~fmModelImpl();
+  ~fmModelImpl();
 
 private slots:
 	void startModel();
+	void test();
 
 private:
-  QwtPlot *predPlot;
-  QwtPlot *preyPlot;
+  /*QwtPlot *predPlot;
+  QwtPlot *preyPlot;*/
+	QwtPlot *populPlot;
 	QwtPlot *phasePlot;
+	QwtPlotCurve *preyCurve;
   QwtPlotCurve *predCurve;
-  QwtPlotCurve *preyCurve;
+	QwtPlotCurve *preyBal;
+	QwtPlotCurve *predBal;
 	QwtPlotCurve *phaseCurve;
-
 	MathStuff::Euler *eeul;
 };
 #endif

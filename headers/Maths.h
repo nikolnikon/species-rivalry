@@ -27,6 +27,7 @@ namespace MathStuff
 		const std::vector<double>& operator[](int ind) const { return m[ind]; }
 		void addRow();
 		void addRow(const std::vector<double> &crRow);
+		void clear();
 	private:
 		Vecs m;
 		int iNumColumns;
@@ -43,10 +44,11 @@ namespace MathStuff
 		void setStep(double step) { dStep = step; }
 		void setAccuracy(double accur) { dAccuracy = accur; }
 		// не уверен, что копирование вектора - хороший ход
-		//void setInitConds(const std::vector<double> &crInitConds) { vecInitConds = crInitConds; } 
+		void setInitConds(const std::vector<double> &crInitConds); 
 		void setRightFuncs(const std::vector<RightFunc> &crRightFuncs) { vecRightFuncs = crRightFuncs; }
 		virtual void solve() = 0;
 		const Matrix& getSolution() const { return mSol; }
+		virtual const std::vector<double>* getNextPoint() = 0;
 		const std::vector<double>& getTimeNodes() const { return vecTimeNodes; } 
 	protected:
 		/*!Количество уравнений в системе*/
@@ -64,6 +66,7 @@ namespace MathStuff
 	public:
 		ExplicitEuler(int dimension, double initStep, double accuracy, double endTime, const std::vector<double> &initConds, const std::vector<RightFunc> &rightFuncs);
 		void solve();
+		const std::vector<double>* getNextPoint();
 	};
 
 	/*!Класс, реализующий функциональный объект, который представляет функцию правой части*/
