@@ -9,8 +9,11 @@ namespace MathStuff
 	/*!Функции вычисления правых частей ОДУ*/
 	double f1(const std::vector<double>& crY, double t = 0);
 	double f2(const std::vector<double>& crY, double t = 0);
-	double defaultFunc(const std::vector<double>& Y, double t = 0);
-	double test(const std::vector<double>& Y, double t);
+	double analyticalPrey(double t);
+	double analyticalPred(double t);
+
+	/*double defaultFunc(const std::vector<double>& Y, double t = 0);
+	double test(const std::vector<double>& Y, double t);*/
 	
 	class Matrix
 	{

@@ -1,7 +1,10 @@
 #include "Maths.h"
+#include <math.h>
+//#include <qwt_math.h>
 
 extern MathStuff::Coeffs preyCoeffs;
 extern MathStuff::Coeffs predCoeffs;
+extern MathStuff::Coeffs analCoeffs;
 
 double MathStuff::f1(const std::vector<double>& Y, double t)
 {
@@ -13,15 +16,25 @@ double MathStuff::f2(const std::vector<double>& Y, double t)
 	return (- predCoeffs.k1() + predCoeffs.k2() * Y[0]) * Y[1]; 
 }
 
-double MathStuff::defaultFunc(const std::vector<double>& Y, double t)
+double MathStuff::analyticalPrey(double t)
 {
-	return 0;
+	return (analCoeffs.k1() * ::cos(preyCoeffs.k1() * predCoeffs.k1() * t - 0));
 }
 
-double MathStuff::test(const std::vector<double>& Y, double t)
+double MathStuff::analyticalPred(double t)
 {
-	return (- 10 * (t - 1) * Y[0]);
+	return (analCoeffs.k2() * ::cos(preyCoeffs.k1() * predCoeffs.k1() * t - 3.14 * 0.5));
 }
+
+//double MathStuff::defaultFunc(const std::vector<double>& Y, double t)
+//{
+//	return 0;
+//}
+//
+//double MathStuff::test(const std::vector<double>& Y, double t)
+//{
+//	return (- 10 * (t - 1) * Y[0]);
+//}
 
 MathStuff::Matrix::Matrix(int numRows, int numColumns) : m(numRows, std::vector<double>(numColumns, 0.0)), iNumColumns(numColumns)
 {

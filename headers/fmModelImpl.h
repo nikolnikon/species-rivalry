@@ -21,10 +21,15 @@ private slots:
 	void test();
 
 private:
+	void setInitConds();
+
 	QwtPlot *populPlot;
+	QwtPlot *analPopulPlot;
 	QwtPlot *phasePlot;
 	QwtPlotCurve *preyCurve;
   QwtPlotCurve *predCurve;
+	QwtPlotCurve *analPreyCurve;
+  QwtPlotCurve *analPredCurve;
 	QwtPlotCurve *preyBal;
 	QwtPlotCurve *predBal;
 	QwtPlotCurve *phaseCurve;

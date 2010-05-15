@@ -4,13 +4,14 @@
 
 MathStuff::Coeffs preyCoeffs;
 MathStuff::Coeffs predCoeffs;
+MathStuff::Coeffs analCoeffs;
 
 int main(int argc, char **argv)
 {
-	preyCoeffs.setK1(3);
+	/*preyCoeffs.setK1(3);
 	preyCoeffs.setK2(2);
 	predCoeffs.setK1(2);
-	predCoeffs.setK2(4);
+	predCoeffs.setK2(4);*/
 
 	QApplication app(argc, argv);
 

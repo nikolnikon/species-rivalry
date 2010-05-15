@@ -13,12 +13,239 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget" >
+   <widget class="QPushButton" name="qpbStop" >
+    <property name="geometry" >
+     <rect>
+      <x>657</x>
+      <y>404</y>
+      <width>48</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text" >
+     <string>Стоп</string>
+    </property>
+   </widget>
+   <widget class="QGroupBox" name="qgbIntParams" >
+    <property name="geometry" >
+     <rect>
+      <x>601</x>
+      <y>313</y>
+      <width>159</width>
+      <height>84</height>
+     </rect>
+    </property>
+    <property name="sizePolicy" >
+     <sizepolicy vsizetype="Preferred" hsizetype="Fixed" >
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
+    </property>
+    <property name="title" >
+     <string>Параметры интегрирования</string>
+    </property>
+    <property name="flat" >
+     <bool>false</bool>
+    </property>
+    <layout class="QVBoxLayout" name="qvlIntParams" >
+     <item>
+      <layout class="QHBoxLayout" name="qhlStep" >
+       <item>
+        <widget class="QLabel" name="qlbStep" >
+         <property name="text" >
+          <string>Шаг</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="qleStep" />
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="qhlTime" >
+       <item>
+        <widget class="QLabel" name="qlbTime" >
+         <property name="text" >
+          <string>Время</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="qleTime" />
+       </item>
+      </layout>
+     </item>
+    </layout>
+    <zorder></zorder>
+    <zorder>qpbStart</zorder>
+    <zorder></zorder>
+   </widget>
+   <widget class="QGroupBox" name="qgbModParams" >
+    <property name="geometry" >
+     <rect>
+      <x>601</x>
+      <y>21</y>
+      <width>159</width>
+      <height>140</height>
+     </rect>
+    </property>
+    <property name="sizePolicy" >
+     <sizepolicy vsizetype="Preferred" hsizetype="Fixed" >
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
+    </property>
+    <property name="title" >
+     <string>Параметры модели</string>
+    </property>
+    <layout class="QVBoxLayout" name="qvlModParams" >
+     <item>
+      <layout class="QHBoxLayout" name="qhlKH" >
+       <item>
+        <widget class="QLabel" name="qlbKH" >
+         <property name="text" >
+          <string>KH</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="qleKH" />
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="qhlKh" >
+       <item>
+        <widget class="QLabel" name="qlbKh" >
+         <property name="text" >
+          <string>Kh</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="qleKh" />
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="qhlKf" >
+       <item>
+        <widget class="QLabel" name="qlbKf" >
+         <property name="text" >
+          <string>Kf</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="qleKf" />
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="qhlKF" >
+       <item>
+        <widget class="QLabel" name="qlbKF" >
+         <property name="text" >
+          <string>KF</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="qleKF" />
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QGroupBox" name="qgbInitConds" >
+    <property name="geometry" >
+     <rect>
+      <x>601</x>
+      <y>167</y>
+      <width>159</width>
+      <height>140</height>
+     </rect>
+    </property>
+    <property name="sizePolicy" >
+     <sizepolicy vsizetype="Preferred" hsizetype="Fixed" >
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
+    </property>
+    <property name="title" >
+     <string>Начальные условия</string>
+    </property>
+    <layout class="QVBoxLayout" name="qvlInitConds" >
+     <item>
+      <layout class="QHBoxLayout" name="qhlPrey" >
+       <item>
+        <widget class="QLabel" name="qlbPrey" >
+         <property name="text" >
+          <string>Жертвы</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="qlePrey" />
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="qhlPred" >
+       <item>
+        <widget class="QLabel" name="qlbPred" >
+         <property name="text" >
+          <string>Хищники</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="qlePred" />
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="qhlDerivPrey" >
+       <item>
+        <widget class="QLabel" name="qlbDerivPrey" >
+         <property name="text" >
+          <string>Произв. жертвы</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="qleDerivPrey" />
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="qhlDerivPred" >
+       <item>
+        <widget class="QLabel" name="qlbDerivPred" >
+         <property name="text" >
+          <string>Произв. хищники</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="qleDerivPred" />
+       </item>
+      </layout>
+     </item>
+    </layout>
+    <zorder>qlbDerivPrey</zorder>
+    <zorder>qleDerivPrey</zorder>
+    <zorder></zorder>
+    <zorder></zorder>
+    <zorder></zorder>
+   </widget>
    <widget class="QPushButton" name="qpbStart" >
     <property name="geometry" >
      <rect>
-      <x>30</x>
-      <y>500</y>
-      <width>75</width>
+      <x>602</x>
+      <y>404</y>
+      <width>49</width>
       <height>23</height>
      </rect>
     </property>
@@ -29,113 +256,15 @@
    <widget class="QPushButton" name="qpbTest" >
     <property name="geometry" >
      <rect>
-      <x>310</x>
-      <y>500</y>
-      <width>75</width>
+      <x>711</x>
+      <y>404</y>
+      <width>48</width>
       <height>23</height>
      </rect>
     </property>
     <property name="text" >
      <string>Тест</string>
     </property>
-   </widget>
-   <widget class="QPushButton" name="qpbStop" >
-    <property name="geometry" >
-     <rect>
-      <x>180</x>
-      <y>500</y>
-      <width>75</width>
-      <height>23</height>
-     </rect>
-    </property>
-    <property name="text" >
-     <string>Стоп</string>
-    </property>
-   </widget>
-   <widget class="QGroupBox" name="qgbBox" >
-    <property name="geometry" >
-     <rect>
-      <x>470</x>
-      <y>60</y>
-      <width>208</width>
-      <height>171</height>
-     </rect>
-    </property>
-    <property name="title" >
-     <string>Параметры интегрирования</string>
-    </property>
-    <property name="flat" >
-     <bool>false</bool>
-    </property>
-    <layout class="QVBoxLayout" name="qvlBox" >
-     <property name="sizeConstraint" >
-      <enum>QLayout::SetFixedSize</enum>
-     </property>
-     <item>
-      <layout class="QVBoxLayout" name="qvlParams" >
-       <item>
-        <layout class="QHBoxLayout" name="qhlPrey" >
-         <item>
-          <widget class="QLabel" name="qlbPrey" >
-           <property name="text" >
-            <string>Жертвы</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLineEdit" name="qlePrey" />
-         </item>
-        </layout>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" name="qhlPred" >
-         <item>
-          <widget class="QLabel" name="qlbPred" >
-           <property name="text" >
-            <string>Хищники</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLineEdit" name="qlePred" />
-         </item>
-        </layout>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" name="qhlStep" >
-         <item>
-          <widget class="QLabel" name="qlbStep" >
-           <property name="text" >
-            <string>Шаг</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLineEdit" name="qleStep" />
-         </item>
-        </layout>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" name="qhlTime" >
-         <item>
-          <widget class="QLabel" name="qlbTime" >
-           <property name="text" >
-            <string>Время</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLineEdit" name="qleTime" />
-         </item>
-        </layout>
-       </item>
-      </layout>
-     </item>
-    </layout>
-    <zorder>qlePrey</zorder>
-    <zorder>qlePred</zorder>
-    <zorder></zorder>
-    <zorder></zorder>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar" >

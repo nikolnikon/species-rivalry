@@ -6,39 +6,62 @@
 #include "Maths.h" 
 
 extern MathStuff::Coeffs preyCoeffs;
-extern MathStuff::Coeffs predCoeffs; 
+extern MathStuff::Coeffs predCoeffs;
+extern MathStuff::Coeffs analCoeffs;
+//extern MathStuff::analyticalPrey;
+//extern MathStuff::analyticalPred;
 
-fmModelImpl::fmModelImpl(QWidget *parent) : QMainWindow(parent), populPlot(0)/*predPlot(0), preyPlot(0)*/, phasePlot(0), preyCurve(0), predCurve(0), preyBal(0), predBal(0), phaseCurve(0), eeul(0)
+fmModelImpl::fmModelImpl(QWidget *parent) : QMainWindow(parent), populPlot(0), analPopulPlot(0), phasePlot(0), preyCurve(0), predCurve(0), analPreyCurve(0), analPredCurve(0), preyBal(0), predBal(0), phaseCurve(0), eeul(0)
 {
   using namespace MathStuff;
 	
 	setupUi(this);
 	
 	populPlot = new QwtPlot(this);
+	analPopulPlot = new QwtPlot(this);
 	phasePlot = new QwtPlot(this);
 	/*populPlot->setGeometry(10, 10, 500, 500);
 	phasePlot->setGeometry(520, 10, 500, 500);*/
 	populPlot->setMargin(5);
+	analPopulPlot->setMargin(5);
 	phasePlot->setMargin(5);
 	
-  QHBoxLayout *plotsLayout = new QHBoxLayout(this);
-	plotsLayout->addWidget(populPlot);
-  plotsLayout->addWidget(phasePlot);
-	QHBoxLayout *buttonsLayout = new QHBoxLayout(this);
+  QHBoxLayout *numericLayout = new QHBoxLayout;
+	numericLayout->addWidget(populPlot);
+  numericLayout->addWidget(phasePlot);
+	
+	QHBoxLayout *analytLayout = new QHBoxLayout;
+	analytLayout->addWidget(analPopulPlot);
+	
+	QVBoxLayout *plotsLayout = new QVBoxLayout;
+	plotsLayout->addLayout(analytLayout);
+	plotsLayout->addLayout(numericLayout);
+	plotsLayout->setSizeConstraint(QLayout::SetMaximumSize);
+	
+	QHBoxLayout *buttonsLayout = new QHBoxLayout;
 	buttonsLayout->addWidget(qpbStart);
 	buttonsLayout->addWidget(qpbStop);
 	buttonsLayout->addWidget(qpbTest);
 	//buttonsLayout->addStretch(4);
-	QVBoxLayout *paramsLayout = new QVBoxLayout(this);
-	paramsLayout->addWidget(qgbBox);
+	
+	QVBoxLayout *paramsLayout = new QVBoxLayout;
+	paramsLayout->setSizeConstraint(QLayout::SetFixedSize);
+	paramsLayout->setGeometry(QRect(paramsLayout->geometry().x(), paramsLayout->geometry().y(), 159, paramsLayout->geometry().height()));
+	paramsLayout->addWidget(qgbModParams);
+	paramsLayout->addWidget(qgbInitConds);
+	paramsLayout->addWidget(qgbIntParams);
 	paramsLayout->addLayout(buttonsLayout);
-	QHBoxLayout *mainLayout = new QHBoxLayout(this);
+	
+	QHBoxLayout *mainLayout = new QHBoxLayout;
 	mainLayout->addLayout(paramsLayout);
 	mainLayout->addLayout(plotsLayout);
 	this->centralWidget()->setLayout(mainLayout);
+	this->adjustSize();
 
 	preyCurve = new QwtPlotCurve();
 	predCurve = new QwtPlotCurve();
+	analPreyCurve = new QwtPlotCurve();
+	analPredCurve = new QwtPlotCurve();
 	preyBal = new QwtPlotCurve();
 	predBal = new QwtPlotCurve();
 	phaseCurve = new QwtPlotCurve();
@@ -47,6 +70,8 @@ fmModelImpl::fmModelImpl(QWidget *parent) : QMainWindow(parent), populPlot(0)/*p
 	QPen predPen(Qt::red, 1, Qt::SolidLine);
 	preyCurve->setPen(preyPen);
 	predCurve->setPen(predPen);
+	analPreyCurve->setPen(preyPen);
+	analPredCurve->setPen(predPen);
 	preyPen.setStyle(Qt::DashLine);
 	predPen.setStyle(Qt::DashLine);
 	preyBal->setPen(preyPen);
@@ -54,6 +79,8 @@ fmModelImpl::fmModelImpl(QWidget *parent) : QMainWindow(parent), populPlot(0)/*p
 
 	preyCurve->attach(populPlot);
 	predCurve->attach(populPlot);
+	analPreyCurve->attach(analPopulPlot);
+	analPredCurve->attach(analPopulPlot);
 	preyBal->attach(populPlot);
 	predBal->attach(populPlot);
 	phaseCurve->attach(phasePlot);
@@ -71,6 +98,47 @@ fmModelImpl::fmModelImpl(QWidget *parent) : QMainWindow(parent), populPlot(0)/*p
 
 	connect(qpbStart, SIGNAL(clicked()), this, SLOT(startModel()));
 	connect(qpbTest, SIGNAL(clicked()), this, SLOT(test()));
+}
+
+void fmModelImpl::setInitConds()
+{
+	using namespace MathStuff;
+	
+	// коэффициенты правых частей
+	preyCoeffs.setK1(qleKH->text().toDouble());
+	preyCoeffs.setK2(qleKh->text().toDouble());
+	predCoeffs.setK1(qleKf->text().toDouble());
+	predCoeffs.setK1(qleKF->text().toDouble());
+	
+	// начальные значения жерт, хищников и их производных
+	double initPrey = qlePrey->text().toDouble();
+	double initPred = qlePred->text().toDouble();
+	double initDerivPrey = qleDerivPrey->text().toDouble();
+	double initDerivPred = qleDerivPred->text().toDouble();
+	
+	std::vector<double> initConds;
+	initConds.push_back(initPrey);
+	initConds.push_back(initPred);
+
+	double step = qleStep->text().toDouble();
+	double time = qleTime->text().toDouble();
+
+	analCoeffs.setK1(initPrey); // fi = 0
+	analCoeffs.setK2(initDerivPred / (preyCoeffs.k1() * predCoeffs.k1())); // fi = pi/2
+	
+	if (! eeul) {
+		std::vector<Euler::RightFunc> rightFuncs;
+		rightFuncs.push_back(f1);
+		rightFuncs.push_back(f2);
+		eeul = new ExplicitEuler(2, step, 0.0001, time, initConds, rightFuncs);
+	}
+	else {
+		eeul->reset();
+		eeul->setStep(step);
+		eeul->setEndTime(time);
+		eeul->setInitConds(initConds);
+
+	}
 }
 
 void fmModelImpl::startModel()
@@ -136,38 +204,26 @@ void fmModelImpl::startModel()
 	//	out << "\n";
 	//}
 	//out << "\n" << crSol.rowCount();
+
+	setInitConds();
 	
-	std::vector<double> initConds;
-	initConds.push_back(qlePrey->text().toDouble());
-	initConds.push_back(qlePred->text().toDouble());
-
-	double step = qleStep->text().toDouble();
-	double time = qleTime->text().toDouble();
-
-	if (! eeul) {
-		std::vector<Euler::RightFunc> rightFuncs;
-		rightFuncs.push_back(f1);
-		rightFuncs.push_back(f2);
-		eeul = new ExplicitEuler(2, step, 0.0001, time, initConds, rightFuncs);
-	}
-	else {
-		eeul->reset();
-		eeul->setStep(step);
-		eeul->setEndTime(time);
-		eeul->setInitConds(initConds);
-		//populPlot->clear();
-
-	}
-
-	QPolygonF plgn_prey, plgn_pred, plgn_phase;
+	QPolygonF plgn_prey, plgn_pred, plgn_anal_prey, plgn_anal_pred, plgn_phase;
 	int iter = 0;
+	double curTime = 0;
 	while (const std::vector<double> *pPoint = eeul->getNextPoint()) {
-		plgn_prey << QPointF(iter * eeul->getStep(), pPoint->at(0));
-		plgn_pred << QPointF(iter * eeul->getStep(), pPoint->at(1));
+		curTime = iter * eeul->getStep();
+		plgn_prey << QPointF(curTime, pPoint->at(0));
+		plgn_pred << QPointF(curTime, pPoint->at(1));
+		plgn_anal_prey << QPointF(curTime, analyticalPrey(curTime));
+		plgn_anal_pred << QPointF(curTime, analyticalPred(curTime));
 		preyCurve->setData(plgn_prey);
 		predCurve->setData(plgn_pred);
+		analPreyCurve->setData(plgn_anal_prey);
+		analPredCurve->setData(plgn_anal_pred);
 		populPlot->replot();
+		analPopulPlot->replot();
 		iter += 1;
+		qApp->processEvents();
 	}
 }
 
