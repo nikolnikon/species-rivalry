@@ -1,17 +1,15 @@
 #include <QtGui>
-#include <fstream> 
+ 
 #include <qwt_plot.h>
 #include <qwt_plot_curve.h>
 #include "fmModelImpl.h"
-#include "Maths.h" 
 
-extern MathStuff::Coeffs preyCoeffs;
-extern MathStuff::Coeffs predCoeffs;
-extern MathStuff::Coeffs analCoeffs;
-//extern MathStuff::analyticalPrey;
-//extern MathStuff::analyticalPred;
+double left_bound = 0;
+double right_bound = 5;
+double plot_step = 1.;
+//int iter = -1;
 
-fmModelImpl::fmModelImpl(QWidget *parent) : QMainWindow(parent), populPlot(0), analPopulPlot(0), phasePlot(0), preyCurve(0), predCurve(0), analPreyCurve(0), analPredCurve(0), preyBal(0), predBal(0), phaseCurve(0), eeul(0)
+fmModelImpl::fmModelImpl(QWidget *parent) : QMainWindow(parent), populPlot(0), analPopulPlot(0), phasePlot(0), preyCurve(0), predCurve(0), analPreyCurve(0), analPredCurve(0), preyBal(0), predBal(0), phaseCurve(0), eeul(0), stopped(false), initConds(2)
 {
   using namespace MathStuff;
 	
@@ -20,9 +18,9 @@ fmModelImpl::fmModelImpl(QWidget *parent) : QMainWindow(parent), populPlot(0), a
 	populPlot = new QwtPlot(this);
 	analPopulPlot = new QwtPlot(this);
 	phasePlot = new QwtPlot(this);
-	/*populPlot->setGeometry(10, 10, 500, 500);
-	phasePlot->setGeometry(520, 10, 500, 500);*/
 	populPlot->setMargin(5);
+	populPlot->setAxisScale(QwtPlot::xBottom, left_bound, right_bound, plot_step);
+	analPopulPlot->setAxisScale(QwtPlot::xBottom, left_bound, right_bound, plot_step);
 	analPopulPlot->setMargin(5);
 	phasePlot->setMargin(5);
 	
@@ -42,7 +40,6 @@ fmModelImpl::fmModelImpl(QWidget *parent) : QMainWindow(parent), populPlot(0), a
 	buttonsLayout->addWidget(qpbStart);
 	buttonsLayout->addWidget(qpbStop);
 	buttonsLayout->addWidget(qpbTest);
-	//buttonsLayout->addStretch(4);
 	
 	QVBoxLayout *paramsLayout = new QVBoxLayout;
 	paramsLayout->setSizeConstraint(QLayout::SetFixedSize);
@@ -86,59 +83,44 @@ fmModelImpl::fmModelImpl(QWidget *parent) : QMainWindow(parent), populPlot(0), a
 	phaseCurve->attach(phasePlot);
 
 
-	/*std::vector<double> initConds;
-	initConds.push_back(2);
-	initConds.push_back(3);
-	
 	std::vector<Euler::RightFunc> rightFuncs;
 	rightFuncs.push_back(f1);
 	rightFuncs.push_back(f2);
 	
-	eeul = new ExplicitEuler(2, 0.01, 0.1, 10, initConds, rightFuncs);*/
+	eeul = new ExplicitEuler(2, rightFuncs);
 
 	connect(qpbStart, SIGNAL(clicked()), this, SLOT(startModel()));
+	connect(qpbStop, SIGNAL(clicked()), this, SLOT(pauseModel()));
 	connect(qpbTest, SIGNAL(clicked()), this, SLOT(test()));
+	connect(qleStep, SIGNAL(textChanged(const QString &)), this, SLOT(stepChanged(const QString &)));
+	connect(qleTime, SIGNAL(textChanged(const QString &)), this, SLOT(timeChanged(const QString &)));
+	connect(qleKH, SIGNAL(textChanged(const QString &)), this, SLOT(KHChanged(const QString &)));
+	connect(qleKh, SIGNAL(textChanged(const QString &)), this, SLOT(KhChanged(const QString &)));
+	connect(qleKf, SIGNAL(textChanged(const QString &)), this, SLOT(KfChanged(const QString &)));
+	connect(qleKF, SIGNAL(textChanged(const QString &)), this, SLOT(KFChanged(const QString &)));
+	connect(qlePrey, SIGNAL(textChanged(const QString &)), this, SLOT(preyChanged(const QString &)));
+	connect(qlePred, SIGNAL(textChanged(const QString &)), this, SLOT(predChanged(const QString &)));
+	/*connect(qle, SIGNAL(textChanged(const QString &)), this, SLOT(Changed(const QString &)));*/
+
+	out.open("out.txt");
 }
 
 void fmModelImpl::setInitConds()
 {
 	using namespace MathStuff;
-	
-	// коэффициенты правых частей
-	preyCoeffs.setK1(qleKH->text().toDouble());
-	preyCoeffs.setK2(qleKh->text().toDouble());
-	predCoeffs.setK1(qleKf->text().toDouble());
-	predCoeffs.setK1(qleKF->text().toDouble());
-	
-	// начальные значения жерт, хищников и их производных
-	double initPrey = qlePrey->text().toDouble();
-	double initPred = qlePred->text().toDouble();
-	double initDerivPrey = qleDerivPrey->text().toDouble();
-	double initDerivPred = qleDerivPred->text().toDouble();
-	
-	std::vector<double> initConds;
-	initConds.push_back(initPrey);
-	initConds.push_back(initPred);
+}
+void fmModelImpl::preyChanged(const QString &val)
+{
+	initConds[0] = val.toDouble();
+	analCoeffs.setK1(val.toDouble());
+	bPreyChanged = true;
+}
 
-	double step = qleStep->text().toDouble();
-	double time = qleTime->text().toDouble();
-
-	analCoeffs.setK1(initPrey); // fi = 0
-	analCoeffs.setK2(initDerivPred / (preyCoeffs.k1() * predCoeffs.k1())); // fi = pi/2
-	
-	if (! eeul) {
-		std::vector<Euler::RightFunc> rightFuncs;
-		rightFuncs.push_back(f1);
-		rightFuncs.push_back(f2);
-		eeul = new ExplicitEuler(2, step, 0.0001, time, initConds, rightFuncs);
-	}
-	else {
-		eeul->reset();
-		eeul->setStep(step);
-		eeul->setEndTime(time);
-		eeul->setInitConds(initConds);
-
-	}
+void fmModelImpl::predChanged(const QString &val) 
+{
+	initConds[1] = val.toDouble();
+	analCoeffs.setK2(val.toDouble());
+	bPredChanged = true;
 }
 
 void fmModelImpl::startModel()
@@ -205,36 +187,108 @@ void fmModelImpl::startModel()
 	//}
 	//out << "\n" << crSol.rowCount();
 
-	setInitConds();
+	//setInitConds();
+
+	// коэффициенты правых частей
+	stopped = false;
+	bool calc = true;
 	
-	QPolygonF plgn_prey, plgn_pred, plgn_anal_prey, plgn_anal_pred, plgn_phase;
-	int iter = 0;
+	// начальные значения жертв, хищников
+	/*double initPrey = qlePrey->text().toDouble();
+	double initPred = qlePred->text().toDouble();
+	
+	analCoeffs.setK1(initConds[0]);
+	analCoeffs.setK2(initConds[1]);*/
+	
+	/*if (preyChanged && ! predChanged) {
+		std::vector<double> initConds(2);
+		initConds.push_back(initPrey);
+		initConds.push_back(eeul->getPoint(eeul->getCurIter())[1]);
+		eeul->initPoint(eeul->getCurIter() + 1, initConds);
+		preyChanged = false;
+	}
+	if (! preyChanged && predChanged) {
+		std::vector<double> initConds(2);
+		initConds.push_back(eeul->getPoint(eeul->getCurIter())[0]);
+		initConds.push_back(initPred);
+		eeul->initPoint(eeul->getCurIter() + 1, initConds);
+		predChanged = false;
+	}
+	if (preyChanged && predChanged) {
+		std::vector<double> initConds(2);
+		initConds.push_back(initPrey);
+		initConds.push_back(initPred);
+		eeul->initPoint(eeul->getCurIter() + 1, initConds);
+		preyChanged = false;
+		predChanged = false;
+	}*/
+	if (bPreyChanged || bPredChanged) {
+		eeul->initPoint(eeul->getCurIter() + 1, initConds);
+		bPreyChanged = false;
+		bPredChanged = false;
+		calc = false;
+	}
+	
 	double curTime = 0;
-	while (const std::vector<double> *pPoint = eeul->getNextPoint()) {
-		curTime = iter * eeul->getStep();
+	int ti = 0;
+	while (const std::vector<double> *pPoint = eeul->getNextPoint(calc)) {
+		curTime = eeul->getCurIter() * eeul->getStep();
 		plgn_prey << QPointF(curTime, pPoint->at(0));
 		plgn_pred << QPointF(curTime, pPoint->at(1));
 		plgn_anal_prey << QPointF(curTime, analyticalPrey(curTime));
 		plgn_anal_pred << QPointF(curTime, analyticalPred(curTime));
+		plgn_phase << QPointF(pPoint->at(0), pPoint->at(1));
 		preyCurve->setData(plgn_prey);
 		predCurve->setData(plgn_pred);
 		analPreyCurve->setData(plgn_anal_prey);
 		analPredCurve->setData(plgn_anal_pred);
+		phaseCurve->setData(plgn_phase);
+
+		if (curTime > right_bound) {
+			left_bound += 1;
+			right_bound += 1;
+      populPlot->setAxisScale(QwtPlot::xBottom, left_bound, right_bound, plot_step);
+			analPopulPlot->setAxisScale(QwtPlot::xBottom, left_bound, right_bound, plot_step);
+		}
+
 		populPlot->replot();
 		analPopulPlot->replot();
-		iter += 1;
+		phasePlot->replot();
+		//iter += 1;
+		calc = true;
 		qApp->processEvents();
+		ti+=1;
 	}
+	out << ti <<"\n";
+}
+
+void fmModelImpl::pauseModel()
+{
+	/*initConds[0] = eeul->getPoint(eeul->getCurIter())[0];
+	initConds[0] = eeul->getPoint(eeul->getCurIter())[0];*/
+	initConds = eeul->getPoint(eeul->getCurIter());
+	stopped = true;
+	while (stopped)
+		qApp->processEvents();
 }
 
 fmModelImpl::~fmModelImpl()
 {
+	const MathStuff::Matrix &m = eeul->getSolution();
+	for (int i = 0; i < m.rowCount(); ++i) {
+		out << i << ":\t";
+		for (int j = 0; j < m.columnCount(); ++j)
+			out << m[i][j] << "\t";
+		out << "\n";
+	}
+	
 	delete eeul;
 	delete preyCurve;
 	delete predCurve;
 	delete phaseCurve;
 	delete populPlot;
 	delete phasePlot;
+	
 }
 
 void fmModelImpl::test()

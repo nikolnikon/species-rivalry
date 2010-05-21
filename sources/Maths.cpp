@@ -1,5 +1,6 @@
 #include "Maths.h"
 #include <math.h>
+#include <QtGui>
 //#include <qwt_math.h>
 
 extern MathStuff::Coeffs preyCoeffs;
@@ -19,11 +20,13 @@ double MathStuff::f2(const std::vector<double>& Y, double t)
 double MathStuff::analyticalPrey(double t)
 {
 	return (analCoeffs.k1() * ::cos(preyCoeffs.k1() * predCoeffs.k1() * t - 0));
+	//return (analCoeffs.k1()* ::cos(preyCoeffs.k1() * predCoeffs.k1() * t));
 }
 
 double MathStuff::analyticalPred(double t)
 {
 	return (analCoeffs.k2() * ::cos(preyCoeffs.k1() * predCoeffs.k1() * t - 3.14 * 0.5));
+	//return (analCoeffs.k2()* ::cos(preyCoeffs.k1() * predCoeffs.k1() * t));
 }
 
 //double MathStuff::defaultFunc(const std::vector<double>& Y, double t)
@@ -36,7 +39,7 @@ double MathStuff::analyticalPred(double t)
 //	return (- 10 * (t - 1) * Y[0]);
 //}
 
-MathStuff::Matrix::Matrix(int numRows, int numColumns) : m(numRows, std::vector<double>(numColumns, 0.0)), iNumColumns(numColumns)
+MathStuff::Matrix::Matrix(int numColumns) : m(0, std::vector<double>(numColumns, 0.0)), iNumColumns(numColumns)
 {
 	//for (Vecs::iterator it = m.begin(); it != m.end(); ++it)
 	//	it->resize(numColumns);
@@ -63,7 +66,7 @@ void MathStuff::Matrix::clear()
 	m.clear();
 }
 
-MathStuff::Euler::Euler(int dimension, double initStep, double accuracy, double endTime, const std::vector<double> &initConds, const std::vector<MathStuff::Euler::RightFunc> &rightFuncs) : iDimension(dimension), dStep(initStep), dAccuracy(accuracy), dEndTime(endTime), vecRightFuncs(rightFuncs), vecTimeNodes(1, 0.0), mSol(initConds)
+MathStuff::Euler::Euler(int dimension, double initStep, double accuracy, double endTime, const std::vector<double> &initConds, const std::vector<MathStuff::Euler::RightFunc> &rightFuncs) : iDimension(dimension), dStep(initStep), dAccuracy(accuracy), dEndTime(endTime), vecRightFuncs(rightFuncs), vecTimeNodes(1, 0.0), mSol(initConds), iIter(-1)
 {
 }
 
@@ -73,6 +76,12 @@ void MathStuff::Euler::setInitConds(const std::vector<double> &crInitConds)
 	mSol.addRow(crInitConds);
 	vecTimeNodes.clear();
 	vecTimeNodes.push_back(0.);
+}
+
+void MathStuff::Euler::initPoint(int iter, const std::vector<double> &crPoint)
+{
+	mSol.addRow(crPoint);
+	vecTimeNodes.push_back(iter * dStep);
 }
 
 void MathStuff::Euler::reset()
@@ -99,21 +108,24 @@ void MathStuff::ExplicitEuler::solve()
 	}
 }
 
-const std::vector<double>* MathStuff::ExplicitEuler::getNextPoint()
+const std::vector<double>* MathStuff::ExplicitEuler::getNextPoint(bool calc)
 {
-	static int iter = 0;
-	//++iter;
-	if (iter == 0)
-		return &(mSol[iter++]);
-	double curTime = 0; 
-	curTime += iter * dStep;
+	//static int iIter = 0;
+	iIter += 1;
+	if (iIter == 500)
+		qDebug("stop");
+	//if (iIter == 0)
+	if (! calc)
+		//return &(mSol[iIter++]);
+		return &(mSol[iIter]);
+	double curTime = iIter * dStep;
 	if (curTime > dEndTime) {
-		iter = 0;
+		//iIter = 0;
 		return 0;
 	}
 	vecTimeNodes.push_back(curTime);
 	mSol.addRow();
 	for (int i = 0; i < mSol.columnCount(); ++i)
-		mSol[iter][i] = mSol[iter - 1][i] + dStep * vecRightFuncs[i](mSol[iter - 1], vecTimeNodes[iter - 1]);
-	return &(mSol[iter++]);
+		mSol[iIter][i] = mSol[iIter - 1][i] + dStep * vecRightFuncs[i](mSol[iIter - 1], vecTimeNodes[iIter - 1]);
+	return &(mSol[iIter]);
 }

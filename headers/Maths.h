@@ -21,7 +21,7 @@ namespace MathStuff
 		typedef std::vector<std::vector<double>> Vecs;
 
 		Matrix() {}
-		Matrix(int numRows, int numColumns);
+		Matrix(int numColumns);
 		Matrix(const std::vector<double> &crFirstRow);
 		
 		int rowCount() const { return m.size(); }
@@ -41,19 +41,23 @@ namespace MathStuff
 	public:
 		typedef std::tr1::function<double (const std::vector<double>& , double )> RightFunc;
 
+		Euler(int dimension, const std::vector<RightFunc> &rightFuncs) : iDimension(dimension), vecRightFuncs(rightFuncs), iIter(-1), mSol(dimension) {}
 		Euler(int dimension, double initStep, double accuracy, double endTime, const std::vector<double> &initConds, const std::vector<RightFunc> &rightFuncs);
 		virtual ~Euler() {};
 		
 		void setStep(double step) { dStep = step; }
 		void setEndTime(double endTime) { dEndTime = endTime; }
 		// не уверен, что копирование вектора - хороший ход
-		void setInitConds(const std::vector<double> &crInitConds); 
+		void setInitConds(const std::vector<double> &crInitConds);
+		void initPoint(int iter, const std::vector<double> &crPoint); 
 		void setRightFuncs(const std::vector<RightFunc> &crRightFuncs) { vecRightFuncs = crRightFuncs; }
 		virtual void solve() = 0;
 		double getStep() const { return dStep; }
 		const Matrix& getSolution() const { return mSol; }
-		virtual const std::vector<double>* getNextPoint() = 0;
+		virtual const std::vector<double>* getNextPoint(bool calc = true) = 0;
 		const std::vector<double>& getTimeNodes() const { return vecTimeNodes; }
+		const std::vector<double>& getPoint(int iter) const { return mSol[iter]; }
+		int getCurIter() const { return iIter; }
 		void reset();
 	protected:
 		/*!Количество уравнений в системе*/
@@ -64,14 +68,16 @@ namespace MathStuff
 		std::vector<double> vecTimeNodes;
 		double dEndTime;
 		Matrix mSol;
+		int iIter;
 	};
 
 	class ExplicitEuler : public Euler
 	{
 	public:
+		ExplicitEuler(int dimension, const std::vector<RightFunc> &rightFuncs) : Euler(dimension, rightFuncs) {}
 		ExplicitEuler(int dimension, double initStep, double accuracy, double endTime, const std::vector<double> &initConds, const std::vector<RightFunc> &rightFuncs);
 		void solve();
-		const std::vector<double>* getNextPoint();
+		const std::vector<double>* getNextPoint(bool calc = true);
 	};
 
 	/*!Класс, реализующий функциональный объект, который представляет функцию правой части*/

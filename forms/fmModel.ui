@@ -58,7 +58,11 @@
         </widget>
        </item>
        <item>
-        <widget class="QLineEdit" name="qleStep" />
+        <widget class="QLineEdit" name="qleStep" >
+         <property name="text" >
+          <string/>
+         </property>
+        </widget>
        </item>
       </layout>
      </item>
@@ -72,13 +76,16 @@
         </widget>
        </item>
        <item>
-        <widget class="QLineEdit" name="qleTime" />
+        <widget class="QLineEdit" name="qleTime" >
+         <property name="text" >
+          <string/>
+         </property>
+        </widget>
        </item>
       </layout>
      </item>
     </layout>
     <zorder></zorder>
-    <zorder>qpbStart</zorder>
     <zorder></zorder>
    </widget>
    <widget class="QGroupBox" name="qgbModParams" >
@@ -110,7 +117,11 @@
         </widget>
        </item>
        <item>
-        <widget class="QLineEdit" name="qleKH" />
+        <widget class="QLineEdit" name="qleKH" >
+         <property name="text" >
+          <string/>
+         </property>
+        </widget>
        </item>
       </layout>
      </item>
@@ -124,7 +135,11 @@
         </widget>
        </item>
        <item>
-        <widget class="QLineEdit" name="qleKh" />
+        <widget class="QLineEdit" name="qleKh" >
+         <property name="text" >
+          <string/>
+         </property>
+        </widget>
        </item>
       </layout>
      </item>
@@ -138,7 +153,11 @@
         </widget>
        </item>
        <item>
-        <widget class="QLineEdit" name="qleKf" />
+        <widget class="QLineEdit" name="qleKf" >
+         <property name="text" >
+          <string/>
+         </property>
+        </widget>
        </item>
       </layout>
      </item>
@@ -152,7 +171,11 @@
         </widget>
        </item>
        <item>
-        <widget class="QLineEdit" name="qleKF" />
+        <widget class="QLineEdit" name="qleKF" >
+         <property name="text" >
+          <string/>
+         </property>
+        </widget>
        </item>
       </layout>
      </item>
@@ -187,7 +210,11 @@
         </widget>
        </item>
        <item>
-        <widget class="QLineEdit" name="qlePrey" />
+        <widget class="QLineEdit" name="qlePrey" >
+         <property name="text" >
+          <string/>
+         </property>
+        </widget>
        </item>
       </layout>
      </item>
@@ -201,7 +228,11 @@
         </widget>
        </item>
        <item>
-        <widget class="QLineEdit" name="qlePred" />
+        <widget class="QLineEdit" name="qlePred" >
+         <property name="text" >
+          <string/>
+         </property>
+        </widget>
        </item>
       </layout>
      </item>
@@ -234,8 +265,6 @@
       </layout>
      </item>
     </layout>
-    <zorder>qlbDerivPrey</zorder>
-    <zorder>qleDerivPrey</zorder>
     <zorder></zorder>
     <zorder></zorder>
     <zorder></zorder>
