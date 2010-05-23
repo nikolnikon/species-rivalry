@@ -25,8 +25,8 @@ public:
 private slots:
 	void startModel();
 	void pauseModel();
-	void stepChanged(const QString &val) {eeul->setStep(val.toDouble());}
-	void timeChanged(const QString &val) {eeul->setEndTime(val.toDouble());}
+	void stepChanged(const QString &val) {eeul->setStep(val.toDouble()); rk->setStep(val.toDouble());}
+	void timeChanged(const QString &val) {eeul->setEndTime(val.toDouble()); rk->setEndTime(val.toDouble());}
 	void preyChanged(const QString &val);
 	void predChanged(const QString &val);
 	void KHChanged(const QString &val) {preyCoeffs.setK1(val.toDouble());}
@@ -39,19 +39,31 @@ private:
 	void setInitConds();
 
 	QwtPlot *populPlot;
+	QwtPlot *rkPopulPlot;
 	QwtPlot *analPopulPlot;
 	QwtPlot *phasePlot;
+	QwtPlot *rkPhasePlot;
+
 	QwtPlotCurve *preyCurve;
   QwtPlotCurve *predCurve;
+
+	QwtPlotCurve *rkPreyCurve;
+  QwtPlotCurve *rkPredCurve;
+
 	QwtPlotCurve *analPreyCurve;
   QwtPlotCurve *analPredCurve;
+
 	QwtPlotCurve *preyBal;
 	QwtPlotCurve *predBal;
+
 	QwtPlotCurve *phaseCurve;
-	QPolygonF plgn_prey, plgn_pred, plgn_anal_prey, plgn_anal_pred, plgn_phase;
+	QwtPlotCurve *rkPhaseCurve;
+	QPolygonF plgn_prey, plgn_pred, plgn_rk_prey, plgn_rk_pred, plgn_anal_prey, plgn_anal_pred, plgn_phase, plgn_rk_phase;
 	MathStuff::Euler *eeul;
+	MathStuff::RungeKutta *rk;
 	bool stopped;
 	std::vector<double> initConds;
+	std::vector<double> rkInitConds;
 	bool bPreyChanged;
 	bool bPredChanged;
 	std::ofstream out;

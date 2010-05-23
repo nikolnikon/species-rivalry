@@ -80,16 +80,24 @@ namespace MathStuff
 		const std::vector<double>* getNextPoint(bool calc = true);
 	};
 
-	/*!Класс, реализующий функциональный объект, который представляет функцию правой части*/
-	/*class RightFunc
+	class RungeKutta : public Euler
 	{
 	public:
-		RightFunc(double k1, double k2) : dK1(k1), dK2(k2) {}
-		double operator()(const std::vector<double> &crY, double t = 0) const;
+		RungeKutta(int dimension, const std::vector<RightFunc> &rightFuncs);
+		RungeKutta(int dimension, double initStep, double accuracy, double endTime, const std::vector<double> &initConds, const std::vector<RightFunc> &rightFuncs);
+		void solve() {}
+		const std::vector<double>* getNextPoint(bool calc = true);
 	private:
-		double dK1;
-		double dK2;
-	};*/
+		void calcK1();
+		void calcK2();
+		void calcK3();
+		void calcK4();
+
+		std::vector<double> vecK1;
+		std::vector<double> vecK2;
+		std::vector<double> vecK3;
+		std::vector<double> vecK4;
+	};
 
 	struct Coeffs
 	{

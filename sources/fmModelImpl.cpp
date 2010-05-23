@@ -9,31 +9,41 @@ double right_bound = 5;
 double plot_step = 1.;
 //int iter = -1;
 
-fmModelImpl::fmModelImpl(QWidget *parent) : QMainWindow(parent), populPlot(0), analPopulPlot(0), phasePlot(0), preyCurve(0), predCurve(0), analPreyCurve(0), analPredCurve(0), preyBal(0), predBal(0), phaseCurve(0), eeul(0), stopped(false), initConds(2)
+fmModelImpl::fmModelImpl(QWidget *parent) : QMainWindow(parent), populPlot(0), analPopulPlot(0), phasePlot(0), preyCurve(0), predCurve(0), analPreyCurve(0), analPredCurve(0), preyBal(0), predBal(0), phaseCurve(0), eeul(0), stopped(false), initConds(2), rkInitConds(2)
 {
   using namespace MathStuff;
 	
 	setupUi(this);
 	
 	populPlot = new QwtPlot(this);
+	rkPopulPlot = new QwtPlot(this);
 	analPopulPlot = new QwtPlot(this);
 	phasePlot = new QwtPlot(this);
+	rkPhasePlot = new QwtPlot(this);
 	populPlot->setMargin(5);
+	rkPopulPlot->setAxisScale(QwtPlot::xBottom, left_bound, right_bound, plot_step);
+	rkPopulPlot->setMargin(5);
 	populPlot->setAxisScale(QwtPlot::xBottom, left_bound, right_bound, plot_step);
 	analPopulPlot->setAxisScale(QwtPlot::xBottom, left_bound, right_bound, plot_step);
 	analPopulPlot->setMargin(5);
 	phasePlot->setMargin(5);
+	rkPhasePlot->setMargin(5);
 	
-  QHBoxLayout *numericLayout = new QHBoxLayout;
-	numericLayout->addWidget(populPlot);
-  numericLayout->addWidget(phasePlot);
+  QHBoxLayout *numericLayout_1 = new QHBoxLayout;
+	numericLayout_1->addWidget(populPlot);
+  numericLayout_1->addWidget(phasePlot);
+
+	QHBoxLayout *numericLayout_2 = new QHBoxLayout;
+	numericLayout_2->addWidget(rkPopulPlot);
+  numericLayout_2->addWidget(rkPhasePlot);
 	
 	QHBoxLayout *analytLayout = new QHBoxLayout;
 	analytLayout->addWidget(analPopulPlot);
 	
 	QVBoxLayout *plotsLayout = new QVBoxLayout;
 	plotsLayout->addLayout(analytLayout);
-	plotsLayout->addLayout(numericLayout);
+	plotsLayout->addLayout(numericLayout_1);
+	plotsLayout->addLayout(numericLayout_2);
 	plotsLayout->setSizeConstraint(QLayout::SetMaximumSize);
 	
 	QHBoxLayout *buttonsLayout = new QHBoxLayout;
@@ -57,16 +67,21 @@ fmModelImpl::fmModelImpl(QWidget *parent) : QMainWindow(parent), populPlot(0), a
 
 	preyCurve = new QwtPlotCurve();
 	predCurve = new QwtPlotCurve();
+	rkPreyCurve = new QwtPlotCurve();
+	rkPredCurve = new QwtPlotCurve();
 	analPreyCurve = new QwtPlotCurve();
 	analPredCurve = new QwtPlotCurve();
 	preyBal = new QwtPlotCurve();
 	predBal = new QwtPlotCurve();
 	phaseCurve = new QwtPlotCurve();
+	rkPhaseCurve = new QwtPlotCurve();
 
 	QPen preyPen(Qt::green, 1, Qt::SolidLine);
 	QPen predPen(Qt::red, 1, Qt::SolidLine);
 	preyCurve->setPen(preyPen);
 	predCurve->setPen(predPen);
+	rkPreyCurve->setPen(preyPen);
+	rkPredCurve->setPen(predPen);
 	analPreyCurve->setPen(preyPen);
 	analPredCurve->setPen(predPen);
 	preyPen.setStyle(Qt::DashLine);
@@ -76,11 +91,14 @@ fmModelImpl::fmModelImpl(QWidget *parent) : QMainWindow(parent), populPlot(0), a
 
 	preyCurve->attach(populPlot);
 	predCurve->attach(populPlot);
+	rkPreyCurve->attach(rkPopulPlot);
+	rkPredCurve->attach(rkPopulPlot);
 	analPreyCurve->attach(analPopulPlot);
 	analPredCurve->attach(analPopulPlot);
 	preyBal->attach(populPlot);
 	predBal->attach(populPlot);
 	phaseCurve->attach(phasePlot);
+	rkPhaseCurve->attach(rkPhasePlot);
 
 
 	std::vector<Euler::RightFunc> rightFuncs;
@@ -88,6 +106,7 @@ fmModelImpl::fmModelImpl(QWidget *parent) : QMainWindow(parent), populPlot(0), a
 	rightFuncs.push_back(f2);
 	
 	eeul = new ExplicitEuler(2, rightFuncs);
+	rk = new RungeKutta(2, rightFuncs);
 
 	connect(qpbStart, SIGNAL(clicked()), this, SLOT(startModel()));
 	connect(qpbStop, SIGNAL(clicked()), this, SLOT(pauseModel()));
@@ -112,6 +131,7 @@ void fmModelImpl::setInitConds()
 void fmModelImpl::preyChanged(const QString &val)
 {
 	initConds[0] = val.toDouble();
+	rkInitConds[0] = val.toDouble();
 	analCoeffs.setK1(val.toDouble());
 	bPreyChanged = true;
 }
@@ -119,6 +139,7 @@ void fmModelImpl::preyChanged(const QString &val)
 void fmModelImpl::predChanged(const QString &val) 
 {
 	initConds[1] = val.toDouble();
+	rkInitConds[1] = val.toDouble();
 	analCoeffs.setK2(val.toDouble());
 	bPredChanged = true;
 }
@@ -224,6 +245,7 @@ void fmModelImpl::startModel()
 	}*/
 	if (bPreyChanged || bPredChanged) {
 		eeul->initPoint(eeul->getCurIter() + 1, initConds);
+		rk->initPoint(rk->getCurIter() + 1, rkInitConds);
 		bPreyChanged = false;
 		bPredChanged = false;
 		calc = false;
@@ -231,29 +253,39 @@ void fmModelImpl::startModel()
 	
 	double curTime = 0;
 	int ti = 0;
-	while (const std::vector<double> *pPoint = eeul->getNextPoint(calc)) {
+	const std::vector<double> *pPoint, *pRkPoint;
+	while ((pPoint = eeul->getNextPoint(calc)) && (pRkPoint = rk->getNextPoint(calc))) {
 		curTime = eeul->getCurIter() * eeul->getStep();
 		plgn_prey << QPointF(curTime, pPoint->at(0));
 		plgn_pred << QPointF(curTime, pPoint->at(1));
+		plgn_rk_prey << QPointF(curTime, pRkPoint->at(0));
+		plgn_rk_pred << QPointF(curTime, pRkPoint->at(1));
 		plgn_anal_prey << QPointF(curTime, analyticalPrey(curTime));
 		plgn_anal_pred << QPointF(curTime, analyticalPred(curTime));
 		plgn_phase << QPointF(pPoint->at(0), pPoint->at(1));
+		plgn_rk_phase << QPointF(pRkPoint->at(0), pRkPoint->at(1));
 		preyCurve->setData(plgn_prey);
 		predCurve->setData(plgn_pred);
+		rkPredCurve->setData(plgn_rk_pred);
+		rkPreyCurve->setData(plgn_rk_prey);
 		analPreyCurve->setData(plgn_anal_prey);
 		analPredCurve->setData(plgn_anal_pred);
 		phaseCurve->setData(plgn_phase);
+		rkPhaseCurve->setData(plgn_rk_phase);
 
 		if (curTime > right_bound) {
 			left_bound += 1;
 			right_bound += 1;
       populPlot->setAxisScale(QwtPlot::xBottom, left_bound, right_bound, plot_step);
+			rkPopulPlot->setAxisScale(QwtPlot::xBottom, left_bound, right_bound, plot_step);
 			analPopulPlot->setAxisScale(QwtPlot::xBottom, left_bound, right_bound, plot_step);
 		}
 
 		populPlot->replot();
+		rkPopulPlot->replot();
 		analPopulPlot->replot();
 		phasePlot->replot();
+		rkPhasePlot->replot();
 		//iter += 1;
 		calc = true;
 		qApp->processEvents();
@@ -267,6 +299,7 @@ void fmModelImpl::pauseModel()
 	/*initConds[0] = eeul->getPoint(eeul->getCurIter())[0];
 	initConds[0] = eeul->getPoint(eeul->getCurIter())[0];*/
 	initConds = eeul->getPoint(eeul->getCurIter());
+	rkInitConds = rk->getPoint(rk->getCurIter());
 	stopped = true;
 	while (stopped)
 		qApp->processEvents();
