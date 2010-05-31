@@ -7,7 +7,7 @@
 
 extern MathStuff::Coeffs preyCoeffs;
 extern MathStuff::Coeffs predCoeffs;
-extern MathStuff::Coeffs analCoeffs;
+extern MathStuff::Coeffs startPopuls;
 
 class QwtPlot;
 class QwtPlotCurve;

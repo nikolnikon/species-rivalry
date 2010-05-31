@@ -1,19 +1,22 @@
 #include <QApplication>
+#include <QTextCodec>
 #include "fmModelImpl.h"
 #include "Maths.h"
 
 MathStuff::Coeffs preyCoeffs;
 MathStuff::Coeffs predCoeffs;
-MathStuff::Coeffs analCoeffs;
+MathStuff::Coeffs startPopuls;
 
 int main(int argc, char **argv)
 {
-	/*preyCoeffs.setK1(7);
-	preyCoeffs.setK2(2);
-	predCoeffs.setK1(2);
-	predCoeffs.setK2(9);*/
-
 	QApplication app(argc, argv);
+
+	//Установка кодека для перевода однобайтовой кодировки в Unicode в функции QObject::tr()
+  //Используется исключительно для преобразования кода проекта в Unicode
+  QTextCodec::setCodecForTr(QTextCodec::codecForName("Windows-1251"));
+  
+  //Установка кодека для перевода const char* и QCString в Unicode и обратно
+  QTextCodec::setCodecForCStrings(QTextCodec::codecForName("Windows-1251"));
 
 	fmModelImpl formModel;
 	formModel.show();

@@ -36,7 +36,7 @@
      </rect>
     </property>
     <property name="sizePolicy" >
-     <sizepolicy vsizetype="Preferred" hsizetype="Fixed" >
+     <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
       <horstretch>0</horstretch>
       <verstretch>0</verstretch>
      </sizepolicy>
@@ -60,7 +60,7 @@
        <item>
         <widget class="QLineEdit" name="qleStep" >
          <property name="text" >
-          <string/>
+          <string>0.01</string>
          </property>
         </widget>
        </item>
@@ -78,7 +78,7 @@
        <item>
         <widget class="QLineEdit" name="qleTime" >
          <property name="text" >
-          <string/>
+          <string>100</string>
          </property>
         </widget>
        </item>
@@ -98,7 +98,7 @@
      </rect>
     </property>
     <property name="sizePolicy" >
-     <sizepolicy vsizetype="Preferred" hsizetype="Fixed" >
+     <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
       <horstretch>0</horstretch>
       <verstretch>0</verstretch>
      </sizepolicy>
@@ -191,7 +191,7 @@
      </rect>
     </property>
     <property name="sizePolicy" >
-     <sizepolicy vsizetype="Preferred" hsizetype="Fixed" >
+     <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
       <horstretch>0</horstretch>
       <verstretch>0</verstretch>
      </sizepolicy>
@@ -237,7 +237,6 @@
       </layout>
      </item>
     </layout>
-    <zorder></zorder>
     <zorder></zorder>
     <zorder></zorder>
    </widget>

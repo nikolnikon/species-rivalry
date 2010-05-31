@@ -5,7 +5,7 @@
 
 extern MathStuff::Coeffs preyCoeffs;
 extern MathStuff::Coeffs predCoeffs;
-extern MathStuff::Coeffs analCoeffs;
+extern MathStuff::Coeffs startPopuls;
 
 double MathStuff::f1(const std::vector<double>& Y, double t)
 {
@@ -14,19 +14,20 @@ double MathStuff::f1(const std::vector<double>& Y, double t)
 
 double MathStuff::f2(const std::vector<double>& Y, double t)
 {
-	return (- predCoeffs.k1() + predCoeffs.k2() * Y[0]) * Y[1]; 
+	//double td = (-predCoeffs.k1() + predCoeffs.k2() * Y[0]) * Y[1];
+	return (-predCoeffs.k1() + predCoeffs.k2() * Y[0]) * Y[1]; 
 }
 
 double MathStuff::analyticalPrey(double t)
 {
-	return (analCoeffs.k1() * ::cos(preyCoeffs.k1() * predCoeffs.k1() * t - 0));
-	//return (analCoeffs.k1()* ::cos(preyCoeffs.k1() * predCoeffs.k1() * t));
+	return ((startPopuls.k1() - predCoeffs.k1() / predCoeffs.k2()) * ::cos(preyCoeffs.k1() * predCoeffs.k1() * t - 0.) + predCoeffs.k1() / predCoeffs.k2());
+	//return (startPopuls.k1() * ::cos(preyCoeffs.k1() * predCoeffs.k1() * t - 0));
 }
 
 double MathStuff::analyticalPred(double t)
 {
-	return (analCoeffs.k2() * ::cos(preyCoeffs.k1() * predCoeffs.k1() * t - 3.14 * 0.5));
-	//return (analCoeffs.k2()* ::cos(preyCoeffs.k1() * predCoeffs.k1() * t));
+	return ((startPopuls.k2() - preyCoeffs.k1() / preyCoeffs.k2()) * ::cos(preyCoeffs.k1() * predCoeffs.k1() * t - 3.14 * 0.5) + preyCoeffs.k1() / preyCoeffs.k2());
+	//return (startPopuls.k2() * ::cos(preyCoeffs.k1() * predCoeffs.k1() * t - 3.14 * 0.5));
 }
 
 //double MathStuff::defaultFunc(const std::vector<double>& Y, double t)
