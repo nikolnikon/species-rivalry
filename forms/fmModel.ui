@@ -17,7 +17,7 @@
     <property name="geometry" >
      <rect>
       <x>657</x>
-      <y>404</y>
+      <y>370</y>
       <width>48</width>
       <height>23</height>
      </rect>
@@ -30,7 +30,7 @@
     <property name="geometry" >
      <rect>
       <x>601</x>
-      <y>313</y>
+      <y>279</y>
       <width>159</width>
       <height>84</height>
      </rect>
@@ -119,7 +119,7 @@
        <item>
         <widget class="QLineEdit" name="qleKH" >
          <property name="text" >
-          <string/>
+          <string>9</string>
          </property>
         </widget>
        </item>
@@ -137,7 +137,7 @@
        <item>
         <widget class="QLineEdit" name="qleKh" >
          <property name="text" >
-          <string/>
+          <string>3</string>
          </property>
         </widget>
        </item>
@@ -155,7 +155,7 @@
        <item>
         <widget class="QLineEdit" name="qleKf" >
          <property name="text" >
-          <string/>
+          <string>15</string>
          </property>
         </widget>
        </item>
@@ -173,7 +173,7 @@
        <item>
         <widget class="QLineEdit" name="qleKF" >
          <property name="text" >
-          <string/>
+          <string>3</string>
          </property>
         </widget>
        </item>
@@ -187,7 +187,7 @@
       <x>601</x>
       <y>167</y>
       <width>159</width>
-      <height>140</height>
+      <height>101</height>
      </rect>
     </property>
     <property name="sizePolicy" >
@@ -212,7 +212,7 @@
        <item>
         <widget class="QLineEdit" name="qlePrey" >
          <property name="text" >
-          <string/>
+          <string>2</string>
          </property>
         </widget>
        </item>
@@ -230,37 +230,9 @@
        <item>
         <widget class="QLineEdit" name="qlePred" >
          <property name="text" >
-          <string/>
+          <string>3</string>
          </property>
         </widget>
-       </item>
-      </layout>
-     </item>
-     <item>
-      <layout class="QHBoxLayout" name="qhlDerivPrey" >
-       <item>
-        <widget class="QLabel" name="qlbDerivPrey" >
-         <property name="text" >
-          <string>Произв. жертвы</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLineEdit" name="qleDerivPrey" />
-       </item>
-      </layout>
-     </item>
-     <item>
-      <layout class="QHBoxLayout" name="qhlDerivPred" >
-       <item>
-        <widget class="QLabel" name="qlbDerivPred" >
-         <property name="text" >
-          <string>Произв. хищники</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLineEdit" name="qleDerivPred" />
        </item>
       </layout>
      </item>
@@ -273,7 +245,7 @@
     <property name="geometry" >
      <rect>
       <x>602</x>
-      <y>404</y>
+      <y>370</y>
       <width>49</width>
       <height>23</height>
      </rect>
@@ -286,7 +258,7 @@
     <property name="geometry" >
      <rect>
       <x>711</x>
-      <y>404</y>
+      <y>370</y>
       <width>48</width>
       <height>23</height>
      </rect>

@@ -58,6 +58,7 @@ private:
 
 	QwtPlotCurve *phaseCurve;
 	QwtPlotCurve *rkPhaseCurve;
+
 	QPolygonF plgn_prey, plgn_pred, plgn_rk_prey, plgn_rk_pred, plgn_anal_prey, plgn_anal_pred, plgn_phase, plgn_rk_phase;
 	MathStuff::Euler *eeul;
 	MathStuff::RungeKutta *rk;

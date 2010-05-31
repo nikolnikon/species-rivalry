@@ -39,7 +39,8 @@ namespace MathStuff
 	class Euler
 	{
 	public:
-		typedef std::tr1::function<double (const std::vector<double>& , double )> RightFunc;
+		//typedef std::tr1::function<double (const std::vector<double>& , double )> RightFunc;
+		typedef double (*RightFunc) (const std::vector<double>& , double );
 
 		Euler(int dimension, const std::vector<RightFunc> &rightFuncs) : iDimension(dimension), vecRightFuncs(rightFuncs), iIter(-1), mSol(dimension) {}
 		Euler(int dimension, double initStep, double accuracy, double endTime, const std::vector<double> &initConds, const std::vector<RightFunc> &rightFuncs);

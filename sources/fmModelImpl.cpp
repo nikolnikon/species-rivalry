@@ -63,7 +63,7 @@ fmModelImpl::fmModelImpl(QWidget *parent) : QMainWindow(parent), populPlot(0), a
 	mainLayout->addLayout(paramsLayout);
 	mainLayout->addLayout(plotsLayout);
 	this->centralWidget()->setLayout(mainLayout);
-	this->adjustSize();
+	showMaximized();
 
 	preyCurve = new QwtPlotCurve();
 	predCurve = new QwtPlotCurve();
