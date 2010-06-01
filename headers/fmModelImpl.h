@@ -11,6 +11,7 @@ extern MathStuff::Coeffs startPopuls;
 
 class QwtPlot;
 class QwtPlotCurve;
+class QwtPlotPicker;
 class QHBoxLayout;
 namespace MathStuff {
 	class Euler;
@@ -33,11 +34,9 @@ private slots:
 	void KhChanged(const QString &val) {preyCoeffs.setK2(val.toDouble());}
 	void KfChanged(const QString &val) {predCoeffs.setK1(val.toDouble());}
 	void KFChanged(const QString &val) {predCoeffs.setK2(val.toDouble());}
-	void test();
+	void restartModel();
 
 private:
-	void setInitConds();
-
 	QwtPlot *populPlot;
 	QwtPlot *rkPopulPlot;
 	QwtPlot *analPopulPlot;
@@ -59,7 +58,12 @@ private:
 	QwtPlotCurve *phaseCurve;
 	QwtPlotCurve *rkPhaseCurve;
 
-	QPolygonF plgn_prey, plgn_pred, plgn_rk_prey, plgn_rk_pred, plgn_anal_prey, plgn_anal_pred, plgn_phase, plgn_rk_phase;
+	QwtPlotPicker *populPicker;
+	QwtPlotPicker *rkPopulPicker;
+	QwtPlotPicker *phasePicker;
+	QwtPlotPicker *rkPhasePicker;
+
+	QPolygonF plgn_prey, plgn_pred, plgn_rk_prey, plgn_rk_pred, plgn_anal_prey, plgn_anal_pred, plgn_phase, plgn_rk_phase, plgn_prey_bal, plgn_pred_bal;
 	MathStuff::Euler *eeul;
 	MathStuff::RungeKutta *rk;
 	bool stopped;
@@ -67,6 +71,6 @@ private:
 	std::vector<double> rkInitConds;
 	bool bPreyChanged;
 	bool bPredChanged;
-	std::ofstream out;
+	//std::ofstream out;
 };
 #endif

@@ -13,25 +13,12 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget" >
-   <widget class="QPushButton" name="qpbStop" >
-    <property name="geometry" >
-     <rect>
-      <x>657</x>
-      <y>370</y>
-      <width>48</width>
-      <height>23</height>
-     </rect>
-    </property>
-    <property name="text" >
-     <string>Стоп</string>
-    </property>
-   </widget>
    <widget class="QGroupBox" name="qgbIntParams" >
     <property name="geometry" >
      <rect>
       <x>601</x>
       <y>279</y>
-      <width>159</width>
+      <width>161</width>
       <height>84</height>
      </rect>
     </property>
@@ -240,31 +227,38 @@
     <zorder></zorder>
     <zorder></zorder>
    </widget>
-   <widget class="QPushButton" name="qpbStart" >
+   <widget class="QWidget" name="" >
     <property name="geometry" >
      <rect>
-      <x>602</x>
+      <x>600</x>
       <y>370</y>
-      <width>49</width>
-      <height>23</height>
+      <width>111</width>
+      <height>54</height>
      </rect>
     </property>
-    <property name="text" >
-     <string>Старт</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="qpbTest" >
-    <property name="geometry" >
-     <rect>
-      <x>711</x>
-      <y>370</y>
-      <width>48</width>
-      <height>23</height>
-     </rect>
-    </property>
-    <property name="text" >
-     <string>Тест</string>
-    </property>
+    <layout class="QGridLayout" name="qglButtons" >
+     <item row="0" column="0" >
+      <widget class="QPushButton" name="qpbStart" >
+       <property name="text" >
+        <string>Старт</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1" >
+      <widget class="QPushButton" name="qpbStop" >
+       <property name="text" >
+        <string>Стоп</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0" colspan="2" >
+      <widget class="QPushButton" name="qpbRestart" >
+       <property name="text" >
+        <string>Перезапуск</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar" >

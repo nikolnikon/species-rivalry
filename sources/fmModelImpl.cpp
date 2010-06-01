@@ -2,14 +2,14 @@
 #include <qwt_legend.h>
 #include <qwt_plot.h>
 #include <qwt_plot_curve.h>
+#include <qwt_plot_picker.h>
 #include "fmModelImpl.h"
 
 double left_bound = 0;
 double right_bound = 5;
 double plot_step = 1.;
-//int iter = -1;
 
-fmModelImpl::fmModelImpl(QWidget *parent) : QMainWindow(parent), populPlot(0), analPopulPlot(0), phasePlot(0), preyCurve(0), predCurve(0), analPreyCurve(0), analPredCurve(0), preyBal(0), predBal(0), phaseCurve(0), eeul(0), stopped(false), initConds(2), rkInitConds(2)
+fmModelImpl::fmModelImpl(QWidget *parent) : QMainWindow(parent), populPlot(0),rkPopulPlot(0), analPopulPlot(0), phasePlot(0), rkPhasePlot(0), preyCurve(0), predCurve(0), rkPreyCurve(0), rkPredCurve(0), analPreyCurve(0), analPredCurve(0), preyBal(0), predBal(0), phaseCurve(0),rkPhaseCurve(0), populPicker(0), rkPopulPicker(0), phasePicker(0), rkPhasePicker(0), eeul(0), rk(0), stopped(false), initConds(2), rkInitConds(2)
 {
   using namespace MathStuff;
 	
@@ -27,6 +27,7 @@ fmModelImpl::fmModelImpl(QWidget *parent) : QMainWindow(parent), populPlot(0), a
 	populPlot->insertLegend(new QwtLegend(), QwtPlot::RightLegend);
 	populPlot->setAxisScale(QwtPlot::xBottom, left_bound, right_bound, plot_step);
 	populPlot->setMargin(5);
+	
 
 	rkPopulPlot->setTitle("Метод Рунге-Кутты 4-го порядка");
 	rkPopulPlot->setAxisTitle(QwtPlot::xBottom, "t");
@@ -41,16 +42,17 @@ fmModelImpl::fmModelImpl(QWidget *parent) : QMainWindow(parent), populPlot(0), a
 	analPopulPlot->insertLegend(new QwtLegend(), QwtPlot::RightLegend);
 	analPopulPlot->setAxisScale(QwtPlot::xBottom, left_bound, right_bound, plot_step);
 	analPopulPlot->setMargin(5);
+	analPopulPlot->setVisible(false);
 
 	phasePlot->setTitle("Явный метод Эйлера");
 	phasePlot->setAxisTitle(QwtPlot::xBottom, "H");
-	phasePlot->setAxisTitle(QwtPlot::yLeft, "F");
+	phasePlot->setAxisTitle(QwtPlot::yLeft, "F(H)");
 	phasePlot->insertLegend(new QwtLegend(), QwtPlot::RightLegend);
 	phasePlot->setMargin(5);
 
 	rkPhasePlot->setTitle("Метод Рунге-Кутты 4-го порядка");
 	rkPhasePlot->setAxisTitle(QwtPlot::xBottom, "H");
-	rkPhasePlot->setAxisTitle(QwtPlot::yLeft, "F");
+	rkPhasePlot->setAxisTitle(QwtPlot::yLeft, "F(H)");
 	rkPhasePlot->insertLegend(new QwtLegend(), QwtPlot::RightLegend);
 	rkPhasePlot->setMargin(5);
 	
@@ -62,27 +64,28 @@ fmModelImpl::fmModelImpl(QWidget *parent) : QMainWindow(parent), populPlot(0), a
 	numericLayout_2->addWidget(rkPopulPlot);
   numericLayout_2->addWidget(rkPhasePlot);
 	
-	QHBoxLayout *analytLayout = new QHBoxLayout;
-	analytLayout->addWidget(analPopulPlot);
+	//QHBoxLayout *analytLayout = new QHBoxLayout;
+	//analytLayout->addWidget(analPopulPlot);
 	
 	QVBoxLayout *plotsLayout = new QVBoxLayout;
-	plotsLayout->addLayout(analytLayout);
+	//plotsLayout->addLayout(analytLayout);
 	plotsLayout->addLayout(numericLayout_1);
 	plotsLayout->addLayout(numericLayout_2);
 	plotsLayout->setSizeConstraint(QLayout::SetMaximumSize);
 	
-	QHBoxLayout *buttonsLayout = new QHBoxLayout;
+	QVBoxLayout *buttonsLayout = new QVBoxLayout;
 	buttonsLayout->addWidget(qpbStart);
 	buttonsLayout->addWidget(qpbStop);
-	buttonsLayout->addWidget(qpbTest);
+	buttonsLayout->addWidget(qpbRestart);
 	
 	QVBoxLayout *paramsLayout = new QVBoxLayout;
 	paramsLayout->setSizeConstraint(QLayout::SetFixedSize);
-	paramsLayout->setGeometry(QRect(paramsLayout->geometry().x(), paramsLayout->geometry().y(), 159, paramsLayout->geometry().height()));
+	paramsLayout->setGeometry(QRect(paramsLayout->geometry().x(), paramsLayout->geometry().y(), 129, 500/*paramsLayout->geometry().height()*/));
 	paramsLayout->addWidget(qgbModParams);
 	paramsLayout->addWidget(qgbInitConds);
 	paramsLayout->addWidget(qgbIntParams);
 	paramsLayout->addLayout(buttonsLayout);
+	//paramsLayout->addWidget(qglButtons);
 	
 	QHBoxLayout *mainLayout = new QHBoxLayout;
 	mainLayout->addLayout(paramsLayout);
@@ -97,19 +100,11 @@ fmModelImpl::fmModelImpl(QWidget *parent) : QMainWindow(parent), populPlot(0), a
 	rkPredCurve = new QwtPlotCurve("F(t)");
 	analPreyCurve = new QwtPlotCurve("H(t)");
 	analPredCurve = new QwtPlotCurve("F(t)");
-	/*preyCurve->setRenderHint(QwtPlotItem::RenderAntialiased);
-	predCurve->setRenderHint(QwtPlotItem::RenderAntialiased);
-	rkPreyCurve->setRenderHint(QwtPlotItem::RenderAntialiased);
-	rkPredCurve->setRenderHint(QwtPlotItem::RenderAntialiased);
-	analPreyCurve->setRenderHint(QwtPlotItem::RenderAntialiased);
-	analPredCurve->setRenderHint(QwtPlotItem::RenderAntialiased);*/
 
-	//preyBal = new QwtPlotCurve();
-	//predBal = new QwtPlotCurve();
+	preyBal = new QwtPlotCurve();
+	predBal = new QwtPlotCurve();
 	phaseCurve = new QwtPlotCurve("F(H)");
 	rkPhaseCurve = new QwtPlotCurve("F(H)");
-	/*phaseCurve->setRenderHint(QwtPlotItem::RenderAntialiased);
-	rkPhaseCurve->setRenderHint(QwtPlotItem::RenderAntialiased);*/
 
 	QPen preyPen(Qt::green, 2, Qt::SolidLine);
 	QPen predPen(Qt::red, 2, Qt::SolidLine);
@@ -119,10 +114,12 @@ fmModelImpl::fmModelImpl(QWidget *parent) : QMainWindow(parent), populPlot(0), a
 	rkPredCurve->setPen(predPen);
 	analPreyCurve->setPen(preyPen);
 	analPredCurve->setPen(predPen);
-	/*preyPen.setStyle(Qt::DashLine);
+	preyPen.setStyle(Qt::DashLine);
 	predPen.setStyle(Qt::DashLine);
+	preyPen.setWidth(1);
+	predPen.setWidth(1);
 	preyBal->setPen(preyPen);
-	predBal->setPen(predPen);*/
+	predBal->setPen(predPen);
 	QPen phasePen(Qt::blue, 2, Qt::SolidLine);
 	phaseCurve->setPen(phasePen);
 	rkPhaseCurve->setPen(phasePen);
@@ -133,11 +130,32 @@ fmModelImpl::fmModelImpl(QWidget *parent) : QMainWindow(parent), populPlot(0), a
 	rkPredCurve->attach(rkPopulPlot);
 	analPreyCurve->attach(analPopulPlot);
 	analPredCurve->attach(analPopulPlot);
-	//preyBal->attach(populPlot);
-	//predBal->attach(populPlot);
+	preyBal->attach(populPlot);
+	predBal->attach(populPlot);
+	preyBal->attach(rkPopulPlot);
+	predBal->attach(rkPopulPlot);
 	phaseCurve->attach(phasePlot);
 	rkPhaseCurve->attach(rkPhasePlot);
 
+	populPicker = new QwtPlotPicker(QwtPlot::xBottom, QwtPlot::yLeft, QwtPicker::PointSelection | QwtPicker::DragSelection, QwtPlotPicker::CrossRubberBand, QwtPicker::AlwaysOn, populPlot->canvas());
+  populPicker->setRubberBandPen(QColor(Qt::blue));
+  //populPicker->setRubberBand(QwtPicker::CrossRubberBand);
+  populPicker->setTrackerPen(QColor(Qt::black));
+	
+	rkPopulPicker = new QwtPlotPicker(QwtPlot::xBottom, QwtPlot::yLeft, QwtPicker::PointSelection | QwtPicker::DragSelection, QwtPlotPicker::CrossRubberBand, QwtPicker::AlwaysOn, rkPopulPlot->canvas());
+  rkPopulPicker->setRubberBandPen(QColor(Qt::blue));
+  //rkPopulPicker->setRubberBand(QwtPicker::CrossRubberBand);
+  rkPopulPicker->setTrackerPen(QColor(Qt::black));
+
+	phasePicker = new QwtPlotPicker(QwtPlot::xBottom, QwtPlot::yLeft, QwtPicker::PointSelection | QwtPicker::DragSelection, QwtPlotPicker::CrossRubberBand, QwtPicker::AlwaysOn, phasePlot->canvas());
+  phasePicker->setRubberBandPen(QColor(Qt::red));
+  //phasePicker->setRubberBand(QwtPicker::CrossRubberBand);
+  phasePicker->setTrackerPen(QColor(Qt::black));
+
+	rkPhasePicker = new QwtPlotPicker(QwtPlot::xBottom, QwtPlot::yLeft, QwtPicker::PointSelection | QwtPicker::DragSelection, QwtPlotPicker::CrossRubberBand, QwtPicker::AlwaysOn, rkPhasePlot->canvas());
+  rkPhasePicker->setRubberBandPen(QColor(Qt::red));
+  //rkPhasePicker->setRubberBand(QwtPicker::CrossRubberBand);
+  rkPhasePicker->setTrackerPen(QColor(Qt::black));
 
 	std::vector<Euler::RightFunc> rightFuncs;
 	rightFuncs.push_back(f1);
@@ -148,7 +166,7 @@ fmModelImpl::fmModelImpl(QWidget *parent) : QMainWindow(parent), populPlot(0), a
 
 	connect(qpbStart, SIGNAL(clicked()), this, SLOT(startModel()));
 	connect(qpbStop, SIGNAL(clicked()), this, SLOT(pauseModel()));
-	connect(qpbTest, SIGNAL(clicked()), this, SLOT(test()));
+	connect(qpbRestart, SIGNAL(clicked()), this, SLOT(restartModel()));
 	connect(qleStep, SIGNAL(textChanged(const QString &)), this, SLOT(stepChanged(const QString &)));
 	connect(qleTime, SIGNAL(textChanged(const QString &)), this, SLOT(timeChanged(const QString &)));
 	connect(qleKH, SIGNAL(textChanged(const QString &)), this, SLOT(KHChanged(const QString &)));
@@ -157,7 +175,6 @@ fmModelImpl::fmModelImpl(QWidget *parent) : QMainWindow(parent), populPlot(0), a
 	connect(qleKF, SIGNAL(textChanged(const QString &)), this, SLOT(KFChanged(const QString &)));
 	connect(qlePrey, SIGNAL(textChanged(const QString &)), this, SLOT(preyChanged(const QString &)));
 	connect(qlePred, SIGNAL(textChanged(const QString &)), this, SLOT(predChanged(const QString &)));
-	/*connect(qle, SIGNAL(textChanged(const QString &)), this, SLOT(Changed(const QString &)));*/
 
 	KHChanged(qleKH->text());
 	KhChanged(qleKh->text());
@@ -167,14 +184,8 @@ fmModelImpl::fmModelImpl(QWidget *parent) : QMainWindow(parent), populPlot(0), a
 	predChanged(qlePred->text());
 	stepChanged(qleStep->text());
 	timeChanged(qleTime->text());
-
-	out.open("out.txt");
 }
 
-void fmModelImpl::setInitConds()
-{
-	using namespace MathStuff;
-}
 void fmModelImpl::preyChanged(const QString &val)
 {
 	initConds[0] = val.toDouble();
@@ -208,10 +219,11 @@ void fmModelImpl::startModel()
 	}
 	
 	double curTime = 0;
-	int ti = 0;
+	//int ti = 0;
 	const std::vector<double> *pPoint, *pRkPoint;
 	while ((pPoint = eeul->getNextPoint(calc)) && (pRkPoint = rk->getNextPoint(calc))) {
 		curTime = eeul->getCurIter() * eeul->getStep();
+		
 		plgn_prey << QPointF(curTime, pPoint->at(0));
 		plgn_pred << QPointF(curTime, pPoint->at(1));
 		plgn_rk_prey << QPointF(curTime, pRkPoint->at(0));
@@ -220,6 +232,9 @@ void fmModelImpl::startModel()
 		plgn_anal_pred << QPointF(curTime, analyticalPred(curTime));
 		plgn_phase << QPointF(pPoint->at(0), pPoint->at(1));
 		plgn_rk_phase << QPointF(pRkPoint->at(0), pRkPoint->at(1));
+		plgn_prey_bal << QPointF(curTime, predCoeffs.k1() / predCoeffs.k2());
+		plgn_pred_bal << QPointF(curTime, preyCoeffs.k1() / preyCoeffs.k2());
+		
 		preyCurve->setData(plgn_prey);
 		predCurve->setData(plgn_pred);
 		rkPredCurve->setData(plgn_rk_pred);
@@ -228,6 +243,8 @@ void fmModelImpl::startModel()
 		analPredCurve->setData(plgn_anal_pred);
 		phaseCurve->setData(plgn_phase);
 		rkPhaseCurve->setData(plgn_rk_phase);
+		preyBal->setData(plgn_prey_bal);
+		predBal->setData(plgn_pred_bal);
 
 		if (curTime > right_bound) {
 			left_bound += 1;
@@ -242,12 +259,44 @@ void fmModelImpl::startModel()
 		analPopulPlot->replot();
 		phasePlot->replot();
 		rkPhasePlot->replot();
-		//iter += 1;
 		calc = true;
 		qApp->processEvents();
-		ti+=1;
+		//ti+=1;
 	}
-	out << ti <<"\n";
+	//out << ti <<"\n";
+}
+
+void fmModelImpl::restartModel()
+{
+	eeul->reset();
+	rk->reset();
+
+	plgn_prey.clear();
+	plgn_pred.clear();
+	plgn_rk_prey.clear();
+	plgn_rk_pred.clear();
+	plgn_anal_prey.clear();
+	plgn_anal_pred.clear();
+	plgn_phase.clear();
+	plgn_rk_phase.clear();
+	plgn_prey_bal.clear();
+	plgn_pred_bal.clear();
+	
+	KHChanged(qleKH->text());
+	KhChanged(qleKh->text());
+	KfChanged(qleKf->text());
+	KFChanged(qleKF->text());
+	preyChanged(qlePrey->text());
+	predChanged(qlePred->text());
+	stepChanged(qleStep->text());
+	timeChanged(qleTime->text());
+
+	left_bound = 0;
+  right_bound = 5;
+	populPlot->setAxisScale(QwtPlot::xBottom, left_bound, right_bound, plot_step);
+	rkPopulPlot->setAxisScale(QwtPlot::xBottom, left_bound, right_bound, plot_step);
+
+	startModel();
 }
 
 void fmModelImpl::pauseModel()
@@ -261,33 +310,36 @@ void fmModelImpl::pauseModel()
 
 fmModelImpl::~fmModelImpl()
 {
-	const MathStuff::Matrix &m = eeul->getSolution();
+	/*const MathStuff::Matrix &m = eeul->getSolution();
 	for (int i = 0; i < m.rowCount(); ++i) {
 		out << i << ":\t";
 		for (int j = 0; j < m.columnCount(); ++j)
 			out << m[i][j] << "\t";
 		out << "\n";
-	}
+	}*/
 	
 	delete eeul;
+	delete rk;
 	delete preyCurve;
 	delete predCurve;
+	delete rkPreyCurve;
+	delete rkPredCurve;
+	delete analPreyCurve;
+	delete analPredCurve;
 	delete phaseCurve;
+	delete rkPhaseCurve;
 	delete populPlot;
+	delete rkPopulPlot;
+	delete analPopulPlot;
 	delete phasePlot;
-	
-}
+	delete rkPhasePlot;
+	delete preyBal;
+	delete predBal;
+	delete populPicker;
+	delete rkPopulPicker;
+	delete phasePicker;
+	delete rkPhasePicker;
 
-void fmModelImpl::test()
-{
-	qDebug("STOP");
-	/*std::ofstream out;
-	out.open("step.txt");
-	while (const std::vector<double> *pPoint = eeul->getNextPoint()) {
-		for(int i = 0; i < pPoint->size(); ++i)
-			out << pPoint->at(i) << "  ";
-		out << "\n";
-	}
-	const MathStuff::Matrix &m = eeul->getSolution();
-	out << "\n" << m.rowCount();*/
+	stopped = false;
+	qApp->processEvents();
 }

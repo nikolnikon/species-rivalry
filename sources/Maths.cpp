@@ -1,7 +1,6 @@
 #include "Maths.h"
 #include <math.h>
 #include <QtGui>
-//#include <qwt_math.h>
 
 extern MathStuff::Coeffs preyCoeffs;
 extern MathStuff::Coeffs predCoeffs;
@@ -14,36 +13,21 @@ double MathStuff::f1(const std::vector<double>& Y, double t)
 
 double MathStuff::f2(const std::vector<double>& Y, double t)
 {
-	//double td = (-predCoeffs.k1() + predCoeffs.k2() * Y[0]) * Y[1];
 	return (-predCoeffs.k1() + predCoeffs.k2() * Y[0]) * Y[1]; 
 }
 
 double MathStuff::analyticalPrey(double t)
 {
 	return ((startPopuls.k1() - predCoeffs.k1() / predCoeffs.k2()) * ::cos(preyCoeffs.k1() * predCoeffs.k1() * t - 0.) + predCoeffs.k1() / predCoeffs.k2());
-	//return (startPopuls.k1() * ::cos(preyCoeffs.k1() * predCoeffs.k1() * t - 0));
 }
 
 double MathStuff::analyticalPred(double t)
 {
 	return ((startPopuls.k2() - preyCoeffs.k1() / preyCoeffs.k2()) * ::cos(preyCoeffs.k1() * predCoeffs.k1() * t - 3.14 * 0.5) + preyCoeffs.k1() / preyCoeffs.k2());
-	//return (startPopuls.k2() * ::cos(preyCoeffs.k1() * predCoeffs.k1() * t - 3.14 * 0.5));
 }
-
-//double MathStuff::defaultFunc(const std::vector<double>& Y, double t)
-//{
-//	return 0;
-//}
-//
-//double MathStuff::test(const std::vector<double>& Y, double t)
-//{
-//	return (- 10 * (t - 1) * Y[0]);
-//}
 
 MathStuff::Matrix::Matrix(int numColumns) : m(0, std::vector<double>(numColumns, 0.0)), iNumColumns(numColumns)
 {
-	//for (Vecs::iterator it = m.begin(); it != m.end(); ++it)
-	//	it->resize(numColumns);
 }
 
 MathStuff::Matrix::Matrix(const std::vector<double> &crFirstRow) : m(1, crFirstRow), iNumColumns(crFirstRow.size())
@@ -89,6 +73,7 @@ void MathStuff::Euler::reset()
 {
 	mSol.clear();
 	vecTimeNodes.clear();
+	iIter = -1;
 }
 
 MathStuff::ExplicitEuler::ExplicitEuler(int dimension, double initStep, double accuracy, double endTime, const std::vector<double> &initConds, const std::vector<RightFunc> &rightFuncs) : Euler(dimension, initStep, accuracy, endTime, initConds, rightFuncs)
@@ -111,11 +96,8 @@ void MathStuff::ExplicitEuler::solve()
 
 const std::vector<double>* MathStuff::ExplicitEuler::getNextPoint(bool calc)
 {
-	//static int iIter = 0;
 	iIter += 1;
-	//if (iIter == 0)
 	if (! calc)
-		//return &(mSol[iIter++]);
 		return &(mSol[iIter]);
 	double curTime = iIter * dStep;
 	if (curTime > dEndTime) {

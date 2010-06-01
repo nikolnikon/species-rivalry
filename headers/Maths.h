@@ -12,9 +12,6 @@ namespace MathStuff
 	double analyticalPrey(double t);
 	double analyticalPred(double t);
 
-	/*double defaultFunc(const std::vector<double>& Y, double t = 0);
-	double test(const std::vector<double>& Y, double t);*/
-	
 	class Matrix
 	{
 	public:
